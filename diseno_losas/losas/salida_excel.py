@@ -33,6 +33,7 @@ AJUSTE = Alignment(wrap_text=True, vertical="top")
 CENTRO = Alignment(horizontal="center", vertical="center", wrap_text=True)
 LIBRE = Alignment(vertical="center", wrap_text=False)
 FORMATOS = {0: "0", 1: "0.0", 2: "0.00", 3: "0.000", 4: "0.0000"}
+ANCHO_FIGURA = 1640      # px, ancho de las láminas dentro de las hojas de memoria
 
 
 def _estilo_estado(celda, texto: str) -> None:
@@ -82,6 +83,15 @@ def _pagina(ws, horizontal=True) -> None:
     ws.sheet_view.showGridLines = False
 
 
+def _imagen(ws, ruta, fila: int, ancho_px: int) -> int:
+    """Inserta una imagen en la columna A y devuelve la primera fila libre debajo."""
+    img = ImagenExcel(str(ruta))
+    escala = min(1.0, ancho_px / img.width)
+    img.width, img.height = int(img.width * escala), int(img.height * escala)
+    ws.add_image(img, f"A{fila}")
+    return fila + int(img.height / 20) + 2          # filas de 15 puntos = 20 px
+
+
 # ---------------------------------------------------------------- memoria
 COLUMNAS = ["Concepto", "Fórmula", "Sustitución", "Resultado", "Unidad", "Verificación",
             "Referencia"]
@@ -92,12 +102,13 @@ def _altura(textos: list, anchos: list[float]) -> float:
     return 14.0 * max(1, int(lineas) + 1)
 
 
-def _escribir_memoria(ws, mem: Memoria, fila: int) -> int:
+def _escribir_memoria(ws, mem: Memoria, fila: int, congelar: bool = True) -> int:
     anchos = [48, 42, 50, 24, 10, 34, 36]
     _anchos(ws, anchos)
     for j, t in enumerate(COLUMNAS, start=1):
         _celda(ws, fila, j, t, NEGRITA, CELESTE, CENTRO)
-    ws.freeze_panes = ws.cell(row=fila + 1, column=1)
+    if congelar:
+        ws.freeze_panes = ws.cell(row=fila + 1, column=1)
     fila += 1
     for p in mem.pasos:
         if p.clase == "seccion":
@@ -131,7 +142,8 @@ def _escribir_memoria(ws, mem: Memoria, fila: int) -> int:
     return fila
 
 
-def _hoja_pano(wb: Workbook, rp: ResultadoPiso, r: ResultadoPano, nombre: str) -> None:
+def _hoja_pano(wb: Workbook, rp: ResultadoPiso, r: ResultadoPano, nombre: str,
+               figura=None) -> None:
     ws = wb.create_sheet(nombre)
     p = r.pano
     _celda(ws, 1, 1, f"MEMORIA DE CÁLCULO - PAÑO {p.id}", TITULO, alineacion=LIBRE, borde=False)
@@ -145,7 +157,10 @@ def _hoja_pano(wb: Workbook, rp: ResultadoPiso, r: ResultadoPano, nombre: str) -
     _estilo_estado(c, r.resultado)
     if not r.calculado:
         _celda(ws, 4, 2, MENSAJE_MEF, NEGRITA, alineacion=LIBRE, borde=False)
-    _escribir_memoria(ws, r.memoria, 6)
+    fila = 6
+    if figura:
+        fila = _imagen(ws, figura, 6, ANCHO_FIGURA)
+    _escribir_memoria(ws, r.memoria, fila, congelar=not figura)
     _pagina(ws)
 
 
@@ -213,7 +228,7 @@ def _tabla(ws, fila: int, titulo: str, encabezados: list[str], filas: list[list]
     return fila + 1
 
 
-def _hoja_resumen(wb: Workbook, rp: ResultadoPiso) -> None:
+def _hoja_resumen(wb: Workbook, rp: ResultadoPiso, figura=None) -> None:
     ws = wb.active
     ws.title = "RESUMEN"
     piso, losa, mat = rp.piso, rp.piso.losa, rp.piso.materiales
@@ -280,6 +295,10 @@ def _hoja_resumen(wb: Workbook, rp: ResultadoPiso) -> None:
         _celda(ws, fila, 1, a, borde=False)
         ws.row_dimensions[fila].height = 14.0 * max(1, int(len(a) / 190) + 1)
         fila += 1
+    if figura:
+        fila += 1
+        _banda(ws, fila, "MAPA DE APROVECHAMIENTO (demanda / capacidad)", len(enc))
+        _imagen(ws, figura, fila + 2, 900)
     _anchos(ws, [9, 13, 8, 8, 8, 22, 11, 14, 14, 14, 14, 14, 14, 12, 13, 12, 12, 16, 60])
     ws.freeze_panes = "B8"
     _pagina(ws)
@@ -320,26 +339,30 @@ def nombre_hoja(id_: str, usados: set[str]) -> str:
     return nombre
 
 
-def escribir(rp: ResultadoPiso, ruta: str | Path, ruta_plano: str | Path | None = None) -> Path:
+def escribir(rp: ResultadoPiso, ruta: str | Path, ruta_plano: str | Path | None = None,
+             figuras: dict | None = None) -> Path:
+    """Escribe la memoria. ``figuras`` es el diccionario que devuelve ``figuras.generar``
+    (láminas por paño, 'general' y 'aprovechamiento'); si no se da, la memoria va sin ellas."""
     ruta = Path(ruta)
+    figuras = {k: v for k, v in (figuras or {}).items() if Path(v).exists()}
     wb = Workbook()
-    _hoja_resumen(wb, rp)
+    _hoja_resumen(wb, rp, figuras.get("aprovechamiento"))
     ws = wb.create_sheet("DATOS")
     _celda(ws, 1, 1, "DATOS GENERALES, SECCIÓN Y CARGAS DE LA LOSA", TITULO, alineacion=LIBRE,
            borde=False)
-    _escribir_memoria(ws, rp.memoria_general, 3)
+    fila = 3
+    if "general" in figuras:
+        fila = _imagen(ws, figuras["general"], 3, ANCHO_FIGURA)
+    _escribir_memoria(ws, rp.memoria_general, fila, congelar="general" not in figuras)
     _pagina(ws)
     usados = {"RESUMEN", "DATOS", "TABLA", "PLANO"}
-    for r in rp.panos.values():
-        _hoja_pano(wb, rp, r, nombre_hoja(r.pano.id, usados))
+    for id_, r in rp.panos.items():
+        _hoja_pano(wb, rp, r, nombre_hoja(r.pano.id, usados), figuras.get(id_))
     _hoja_tabla(wb, rp.piso.losa.tipo)
     if ruta_plano and Path(ruta_plano).exists():
         ws = wb.create_sheet("PLANO")
         _celda(ws, 1, 1, "PLANO ESQUEMÁTICO DE LOSAS", TITULO, alineacion=LIBRE, borde=False)
-        img = ImagenExcel(str(ruta_plano))
-        escala = min(1.0, 1100 / img.width)
-        img.width, img.height = int(img.width * escala), int(img.height * escala)
-        ws.add_image(img, "A3")
+        _imagen(ws, ruta_plano, 3, 1100)
         ws.sheet_view.showGridLines = False
     ruta.parent.mkdir(parents=True, exist_ok=True)
     wb.save(ruta)

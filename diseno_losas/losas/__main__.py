@@ -6,18 +6,23 @@ import sys
 from pathlib import Path
 
 from . import disenar_piso, leer
+from .figuras import generar
 from .modelos import ErrorEntrada
 from .plano import dibujar
 from .salida_excel import escribir
 
 
 def ejecutar(entrada: str | Path, salida: str | Path | None = None):
-    """Diseña el piso descrito en ``entrada`` y escribe el Excel y el plano."""
+    """Diseña el piso descrito en ``entrada`` y escribe el Excel, el plano y las figuras.
+
+    Las figuras se dibujan con los datos de la corrida: cambian con cada paño y cada entrada.
+    """
     entrada = Path(entrada)
     carpeta = Path(salida) if salida else entrada.parent / "salida"
     resultado = disenar_piso(leer(entrada))
     plano = dibujar(resultado, carpeta / f"{entrada.stem}_plano.png")
-    excel = escribir(resultado, carpeta / f"{entrada.stem}_memoria.xlsx", plano)
+    laminas = generar(resultado, carpeta / f"{entrada.stem}_figuras")
+    excel = escribir(resultado, carpeta / f"{entrada.stem}_memoria.xlsx", plano, laminas)
     return resultado, excel, plano
 
 
@@ -40,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
         print("\nAVISOS:")
         for a in res.avisos:
             print(" - " + a)
-    print(f"\nMemoria: {excel}\nPlano:   {plano}")
+    print(f"\nMemoria: {excel}\nPlano:   {plano}\nFiguras: {excel.parent / (Path(args.entrada).stem + '_figuras')}")
     print("RESULTADO DEL PISO: " + res.resultado)
     return 0
 

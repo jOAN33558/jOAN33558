@@ -21,6 +21,26 @@ Genera en la carpeta de salida:
   sustitución, resultado, verificación y referencia), la tabla de coeficientes
   usada y el plano.
 - `piso_ejemplo_plano.png`: plano esquemático con los paños, su tipo y el armado.
+- `piso_ejemplo_figuras/`: una lámina por paño (`pano_P1.png`, ...), `general.png` y
+  `aprovechamiento.png`. Las mismas figuras van incrustadas en el Excel.
+
+## Figuras que cambian con el diseño
+
+Ninguna figura es una imagen fija: todas se dibujan a escala con los datos de la
+entrada y los resultados de la corrida, así que cambian con cada paño y cada vez
+que se modifica el YAML y se vuelve a ejecutar.
+
+| Figura | Dónde va | Qué muestra |
+|---|---|---|
+| Lámina del paño | Al inicio de la hoja de cada paño | Planta con bordes, vecinos, volado, momentos y armado; sección en el vano y sobre el apoyo con las varillas; diagramas de momentos en las dos direcciones; cortante frente a la resistencia, con el macizado; barras de aprovechamiento |
+| Sección y cargas | Hoja DATOS | Sección tipo acotada, composición de la carga permanente y combinaciones |
+| Mapa de aprovechamiento | Hoja RESUMEN | Mayor relación demanda / capacidad de flexión, cortante, flechas y altura en cada paño |
+| Plano del piso | Hoja PLANO | Todos los paños con su tipo y armado |
+
+En la planta se usa la convención de las tablas: rayado = borde continuo, trazos =
+discontinuo, línea simple = libre. Los diagramas de momentos llevan los valores
+de diseño; la forma de la curva es esquemática. Las figuras son imágenes: para
+actualizarlas se cambia el YAML y se ejecuta de nuevo, no se editan dentro de Excel.
 
 Ejemplos incluidos, con su salida ya generada en `ejemplos/salida/`:
 
@@ -153,7 +173,7 @@ python -m pytest
 | `test_tipos.py` | Los 18 tipos, combinaciones no tabuladas, tablas |
 | `test_piso.py` | Piso de 3 x 3, compatibilidad, cortante que no cumple, fuera de alcance, errores de entrada |
 | `test_secciones.py` | Sección T, flexión, inercia efectiva, nervios, malla |
-| `test_salida.py` | Excel (hojas, fuente Arial, sin emojis) y plano |
+| `test_salida.py` | Excel (hojas, fuente Arial, sin emojis), plano, figuras incrustadas y que cambian con los datos |
 
 ## Módulos
 
@@ -169,7 +189,9 @@ python -m pytest
 | `compatibilidad.py` | Momentos negativos en bordes comunes |
 | `flexion.py`, `cortante.py`, `flechas.py`, `verificaciones.py` | Diseño y chequeos |
 | `diseno.py` | Orquestador |
-| `salida_excel.py`, `plano.py` | Salidas |
+| `salida_excel.py`, `plano.py` | Memoria en Excel y plano del piso |
+| `figuras.py`, `fig_planta.py`, `fig_seccion.py`, `fig_diagramas.py` | Láminas de figuras |
+| `indices.py` | Relaciones demanda / capacidad |
 
 Este programa es una ayuda de cálculo. El diseño debe ser revisado y firmado por
 el ingeniero responsable.
