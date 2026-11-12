@@ -1,0 +1,21 @@
+[project]
+name = "losas"
+version = "1.0.0"
+description = "Diseño de las losas de un piso de hormigón armado (NEC-SE-HM, NEC-SE-CG, ACI 318-19)"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0", "numpy>=1.24", "openpyxl>=3.1", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+pruebas = ["pytest>=7.4"]
+
+[project.scripts]
+losas = "losas.__main__:main"
+
+[tool.setuptools]
+packages = ["losas"]
+
+[tool.setuptools.package-data]
+losas = ["datos/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
