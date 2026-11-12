@@ -1,0 +1,36 @@
+# Paño de la hoja de referencia Losas_Alivianadas_Tabla_9.7.xlsx:
+# 4 x 5 m, paño tipo 6, Lx/Ly = 0,8. Sirve para comparar con la hoja.
+# Debe dar My- = 1783, My+ = 988, Mx- = 1356, Mx+ = 587 kg·m/m
+# y armado 1Ø16, 1Ø12, 1Ø14, 1Ø12 por nervio.
+
+proyecto:
+  nombre: "Paño de referencia (hoja Losas Alivianadas, Tabla 9.7)"
+  piso: "Verificación"
+
+materiales: {fc: 210, fy: 4200, peso_hormigon: 2400, recubrimiento: 2.5}
+
+losa:
+  tipo: nervada
+  altura: 20
+  loseta: 5
+  ancho_nervio: 10
+  separacion_nervios: 50
+  peso_bloques: 96
+
+cargas:
+  otras: 150          # "Otros tipos de cargas" de la hoja
+  viva: 250
+
+vigas: {b: 30, h: 35}
+
+ejes:
+  x: {nombres: [A, B], distancias: [4.00]}
+  y: {nombres: ["1", "2"], distancias: [5.00]}
+
+panos:
+  - id: P1
+    ejes_x: [A, B]
+    ejes_y: ["1", "2"]
+    # Tipo 6: un borde largo y un borde corto continuos (se declaran porque
+    # en este archivo no hay paños vecinos).
+    bordes: {norte: continuo, este: continuo, sur: discontinuo, oeste: discontinuo}
