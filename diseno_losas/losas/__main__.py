@@ -5,8 +5,10 @@ import argparse
 import sys
 from pathlib import Path
 
+import yaml
+
 from . import disenar_piso, leer
-from .excel_vivo import escribir_vivo
+from .excel_edificio import escribir_edificio, pisos_desde_yaml
 from .figuras import generar
 from .modelos import ErrorEntrada
 from .plano import dibujar
@@ -24,8 +26,10 @@ def ejecutar(entrada: str | Path, salida: str | Path | None = None):
     plano = dibujar(resultado, carpeta / f"{entrada.stem}_plano.png")
     laminas = generar(resultado, carpeta / f"{entrada.stem}_figuras")
     excel = escribir(resultado, carpeta / f"{entrada.stem}_memoria.xlsx", plano, laminas)
-    try:      # Excel con fórmulas vivas y gráficos nativos, cuando el piso lo permite
-        escribir_vivo(leer(entrada), carpeta / f"{entrada.stem}_vivo.xlsx")
+    try:      # Excel con fórmulas vivas y gráficos nativos (varios pisos y volados)
+        with open(entrada, encoding="utf-8") as f:
+            pisos = pisos_desde_yaml(yaml.safe_load(f))
+        escribir_edificio(leer(entrada), pisos, carpeta / f"{entrada.stem}_vivo.xlsx")
     except ErrorEntrada as e:
         resultado.avisos.append(f"No se generó el Excel con fórmulas vivas: {e}")
     return resultado, excel, plano
