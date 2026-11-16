@@ -1,0 +1,642 @@
+<title>Losas Nervadas en Vivo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+<style>
+/* Plano de taller: columna de datos a la izquierda, piso y figuras del paño a la derecha; en celular se apilan. */
+:root{
+  --bg:#F3F5F7; --panel:#FFFFFF; --fg:#16202B; --muted:#5B6878; --line:#D3DAE2; --grid:#E6EBF0;
+  --accent:#1F5F8B; --accent-soft:#DCE9F3;
+  --ok:#2E8B57; --ok-soft:#DDF1E5; --warn:#B7791F; --warn-soft:#FBEFD6; --bad:#C0392B; --bad-soft:#F8DEDA;
+  --inf:#17804A; --sup:#C25A14; --concrete:#C9D1D9; --block:#F1E6C8; --block-line:#BFA66A;
+  --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151C; --panel:#17202A; --fg:#E4EAF0; --muted:#94A3B4; --line:#2C3946; --grid:#222D38;
+  --accent:#6FAEDB; --accent-soft:#1D3447;
+  --ok:#5BC08A; --ok-soft:#173527; --warn:#E3AE57; --warn-soft:#3A2E16; --bad:#EE7A6C; --bad-soft:#40211D;
+  --inf:#5BC08A; --sup:#F0955A; --concrete:#4A5868; --block:#4A4232; --block-line:#8C7A4E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151C; --panel:#17202A; --fg:#E4EAF0; --muted:#94A3B4; --line:#2C3946; --grid:#222D38;
+  --accent:#6FAEDB; --accent-soft:#1D3447;
+  --ok:#5BC08A; --ok-soft:#173527; --warn:#E3AE57; --warn-soft:#3A2E16; --bad:#EE7A6C; --bad-soft:#40211D;
+  --inf:#5BC08A; --sup:#F0955A; --concrete:#4A5868; --block:#4A4232; --block-line:#8C7A4E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{font-family:var(--f-head);font-size:1.75rem;margin:0;letter-spacing:.01em;text-wrap:balance}
+h2{font-family:var(--f-head);font-size:1.15rem;margin:0;text-wrap:balance}
+h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px;font-weight:600}
+.sub{color:var(--muted);margin:2px 0 0;max-width:65ch}
+.cols{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.datos{position:sticky;top:calc(env(safe-area-inset-top,0px) + 10px);display:grid;gap:4px}
+@media (max-width:860px){.datos{position:static}}
+details{border-top:1px solid var(--line);padding:8px 0 4px}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:600;font-size:.9rem;padding:2px 0;list-style-position:inside}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:8px}
+.campos .ancho{grid-column:1/-1}
+label{display:grid;gap:2px;font-size:.78rem;color:var(--muted)}
+input,select{font:inherit;font-size:.95rem;font-family:var(--f-num);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;min-width:0}
+select{font-family:var(--f-body)}
+input:focus-visible,select:focus-visible,button:focus-visible,.borde:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chk{display:flex;gap:8px;align-items:center;color:var(--fg);font-size:.85rem}
+.chk input{width:auto}
+.preset{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.preset label{grid-auto-flow:column;align-items:center;gap:8px;color:var(--fg);font-size:.85rem}
+.preset select{width:auto}
+.derecha{display:grid;gap:18px;min-width:0}
+.fila{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)} .warn{background:var(--warn-soft);color:var(--warn)} .bad{background:var(--bad-soft);color:var(--bad)} .gris{background:var(--grid);color:var(--muted)}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.figs{grid-template-columns:minmax(0,1fr)}}
+.fig{min-width:0}
+.fig .t{font-size:.82rem;font-weight:600;margin-bottom:4px}
+svg{display:block;width:100%;height:auto;font-family:var(--f-body)}
+svg text{fill:var(--fg)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;white-space:nowrap}
+td.n{font-family:var(--f-num);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.sel td{background:var(--accent-soft)}
+tbody tr[data-p]{cursor:pointer}
+.mem td:nth-child(2){font-family:var(--f-num);font-size:.78rem;color:var(--muted)}
+.mem tr.sec td{font-weight:700;color:var(--accent);padding-top:12px;border-bottom:1px solid var(--accent)}
+.nota{font-size:.8rem;color:var(--muted);max-width:75ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.kpi b{display:block;font-family:var(--f-num);font-size:1.1rem;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.75rem;color:var(--muted)}
+.leyenda{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.78rem;color:var(--muted)}
+.leyenda i{display:inline-block;width:22px;height:0;border-top:3px solid;vertical-align:middle;margin-right:5px}
+.borde{cursor:pointer}
+@media (prefers-reduced-motion:no-preference){svg path.anim,svg rect.anim{transition:all .25s ease}}
+</style>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Losas nervadas en vivo</h1>
+    <p class="sub">Cambia cualquier dato o toca un borde del piso: los momentos, el armado, las figuras y las verificaciones se recalculan al instante. Tabla 9.7 (nervadas) y 9.5 (macizas), NEC-SE-HM y ACI 318-19. Unidades kg, cm, m.</p>
+  </div>
+  <div class="preset"><label for="preset">Cargar ejemplo
+    <select id="preset">
+      <option value="oficinas">Ejercicio: oficinas (+2,50 y +5,00)</option>
+      <option value="terraza">Ejercicio: terraza inaccesible (+7,50)</option>
+      <option value="referencia">Paño de la hoja de referencia (4 x 5 m)</option>
+    </select></label></div>
+</header>
+<div class="cols">
+  <aside class="card datos" aria-label="Datos">
+    <h2>Datos</h2>
+    <details open><summary>Materiales</summary><div class="campos">
+      <label for="fc">f'c (kg/cm²)<input id="fc" type="number" step="10" inputmode="decimal"></label>
+      <label for="fy">fy (kg/cm²)<input id="fy" type="number" step="100" inputmode="decimal"></label>
+      <label for="g">Peso hormigón (kg/m³)<input id="g" type="number" step="50" inputmode="decimal"></label>
+      <label for="rec">Recubrimiento (cm)<input id="rec" type="number" step="0.5" inputmode="decimal"></label>
+    </div></details>
+    <details open><summary>Losa</summary><div class="campos">
+      <label for="tipo" class="ancho">Tipo<select id="tipo"><option value="nervada">Nervada (Tabla 9.7)</option><option value="maciza">Maciza (Tabla 9.5)</option></select></label>
+      <label for="h">Altura total h (cm)<input id="h" type="number" step="1" inputmode="decimal"></label>
+      <label for="el" class="nerv">Loseta (cm)<input id="el" type="number" step="0.5" inputmode="decimal"></label>
+      <label for="bw" class="nerv">Ancho de nervio (cm)<input id="bw" type="number" step="1" inputmode="decimal"></label>
+      <label for="s" class="nerv">Separación de nervios, eje a eje (cm)<input id="s" type="number" step="5" inputmode="decimal"></label>
+      <label for="pb" class="nerv">Peso de bloques (kg/m²)<input id="pb" type="number" step="1" inputmode="decimal"></label>
+      <label for="mac" class="nerv">Macizado junto a la viga (m)<input id="mac" type="number" step="0.05" inputmode="decimal"></label>
+    </div></details>
+    <details open><summary>Cargas</summary><div class="campos">
+      <label for="sc">Sobrecarga permanente (kg/m²)<input id="sc" type="number" step="10" inputmode="decimal"></label>
+      <label for="viva">Carga viva (kg/m²)<input id="viva" type="number" step="10" inputmode="decimal"></label>
+      <label for="lambda">λ flecha diferida<input id="lambda" type="number" step="0.1" inputmode="decimal"></label>
+      <label class="chk ancho" for="mamp"><input id="mamp" type="checkbox"> Soporta mampostería (límite L/480; si no, L/240)</label>
+    </div></details>
+    <details open><summary>Vigas y ejes</summary><div class="campos">
+      <label for="vb">Viga b (cm)<input id="vb" type="number" step="5" inputmode="decimal"></label>
+      <label for="vh">Viga h (cm)<input id="vh" type="number" step="5" inputmode="decimal"></label>
+      <label for="dx" class="ancho">Distancias entre ejes en X (m), separadas por espacio<input id="dx" type="text" inputmode="decimal"></label>
+      <label for="dy" class="ancho">Distancias entre ejes en Y (m), separadas por espacio<input id="dy" type="text" inputmode="decimal"></label>
+    </div></details>
+    <p class="nota" id="aviso" role="status"></p>
+  </aside>
+  <main class="derecha">
+    <section class="card" aria-labelledby="t-piso">
+      <div class="fila"><h2 id="t-piso">Piso</h2><span id="pisoEstado"></span></div>
+      <p class="nota">Toca un paño para ver su diseño. Toca un borde para cambiarlo: continuo → discontinuo → libre.</p>
+      <div id="planta"></div>
+      <div class="leyenda"><span><i style="border-color:var(--fg)"></i>Continuo</span><span><i style="border-color:var(--accent);border-top-style:dashed"></i>Discontinuo</span><span><i style="border-color:var(--bad);border-top-style:dotted"></i>Libre</span></div>
+      <div class="kpis" id="kpis" style="margin-top:12px"></div>
+      <div class="scroll" style="margin-top:12px"><table id="tabla"></table></div>
+    </section>
+    <section class="card" aria-labelledby="t-pano">
+      <div class="fila"><h2 id="t-pano">Paño</h2><span id="panoEstado"></span></div>
+      <p class="nota" id="panoInfo"></p>
+      <div class="figs" id="figs"></div>
+    </section>
+    <section class="card" aria-labelledby="t-mem">
+      <h2 id="t-mem">Memoria del paño</h2>
+      <div class="scroll"><table class="mem" id="mem"></table></div>
+      <p class="nota">Flechas con inercia efectiva (ACI 318-19, Tabla 24.2.3.5, fr = 2·√f'c). Cortante solo con los nervios, vc = 1,1·0,53·√f'c si cumple ACI 9.8.1. Los bordes comunes se diseñan con el mayor de los dos momentos negativos. Esta página cubre losas en dos direcciones; los paños en una dirección, volados y casos fuera de alcance se calculan con el programa completo.</p>
+    </section>
+  </main>
+</div>
+</div>
+<script>
+const TABLAS={"nervada":{"1":[[0.5,339,887,464,520,123,0,0,0,0],[0.6,336,878,459,538,126,0,0,0,0],[0.7,315,830,428,559,157,0,0,0,0],[0.8,281,752,378,574,208,0,0,0,0],[0.9,241,659,319,577,242,0,0,0,0],[1,200,564,258,564,258,0,0,0,0]],"2":[[0.5,691,1317,759,773,179,0,0,0,0],[0.6,635,1222,694,808,239,0,0,0,0],[0.7,545,1071,590,829,318,0,0,0,0],[0.8,443,899,473,819,359,0,0,0,0],[0.9,347,736,362,779,368,0,0,0,0],[1,265,597,269,718,354,0,0,0,0]],"3":[[0.5,339,888,464,520,177,0,0,0,0],[0.6,345,902,473,532,167,0,0,0,0],[0.7,339,888,464,548,185,0,0,0,0],[0.8,322,850,439,568,205,0,0,0,0],[0.9,297,790,401,586,240,0,0,0,0],[1,265,718,354,597,269,0,0,0,0]],"4":[[0.5,1479,0,1191,1268,400,0,0,0,0],[0.6,1191,0,952,1288,525,0,0,0,0],[0.7,894,0,705,1232,566,0,0,0,0],[0.8,644,0,496,1119,547,0,0,0,0],[0.9,456,0,340,985,498,0,0,0,0],[1,323,0,231,853,440,0,0,0,0]],"5":[[0.5,335,878,458,0,178,0,0,0,0],[0.6,348,909,477,0,165,0,0,0,0],[0.7,354,921,485,0,174,0,0,0,0],[0.8,351,914,481,0,183,0,0,0,0],[0.9,340,891,465,0,199,0,0,0,0],[1,323,853,440,0,231,0,0,0,0]],"6":[[0.5,712,1353,782,764,238,0,0,0,0],[0.6,693,1323,761,793,271,0,0,0,0],[0.7,644,1240,704,827,310,0,0,0,0],[0.8,572,1120,621,852,369,0,0,0,0],[0.9,489,980,525,857,409,0,0,0,0],[1,406,839,428,839,428,0,0,0,0]],"7":[[0.5,718,1364,790,0,238,0,0,0,0],[0.6,729,1382,802,0,252,0,0,0,0],[0.7,715,1360,785,0,269,0,0,0,0],[0.8,681,1303,746,0,311,0,0,0,0],[0.9,630,1220,687,0,375,0,0,0,0],[1,569,1118,616,0,433,0,0,0,0]],"8":[[0.5,1644,0,1329,1246,434,0,0,0,0],[0.6,1469,0,1183,1308,527,0,0,0,0],[0.7,1230,0,984,1334,615,0,0,0,0],[0.8,979,0,775,1304,659,0,0,0,0],[0.9,754,0,587,1225,654,0,0,0,0],[1,569,0,433,1118,616,0,0,0,0]],"9":[[0.5,1749,0,1416,0,397,0,0,0,0],[0.6,1684,0,1361,0,439,0,0,0,0],[0.7,1550,0,1250,0,547,0,0,0,0],[0.8,1371,0,1101,0,665,0,0,0,0],[0.9,1170,0,932,0,737,0,0,0,0],[1,969,0,765,0,765,0,0,0,0]],"10":[[0.5,5348,2205,7,1552,639,0,0,3131,1575],[0.6,2935,1494,14,1298,563,0,0,2456,1278],[0.7,1637,1084,86,1086,490,0,0,1886,993],[0.8,944,834,125,925,432,0,0,1452,766],[0.9,567,664,128,800,384,0,0,1132,596],[1,355,542,113,698,344,0,0,898,471]],"11":[[0.5,326,856,445,522,127,856,445,0,0],[0.6,326,853,442,532,127,857,445,0,0],[0.7,326,829,428,538,125,858,445,0,0],[0.8,327,791,403,542,124,859,446,0,0],[0.9,337,746,374,543,122,877,457,0,0],[1,355,698,344,542,113,898,471,0,0]],"12":[[0.5,8520,3133,4,1799,800,0,0,3760,1977],[0.6,5298,2201,7,1607,758,0,0,3254,1816],[0.7,3216,1584,42,1388,681,0,0,2668,1527],[0.8,1768,1196,87,1194,603,0,0,2145,1241],[0.9,1230,943,113,1039,538,0,0,1721,1000],[1,789,768,126,914,484,0,0,1390,807]],"13":[[0.5,672,1278,733,764,179,1285,737,0,0],[0.6,674,1233,701,775,174,1287,739,0,0],[0.7,679,1159,651,780,176,1296,744,0,0],[0.8,718,1074,593,780,165,1335,771,0,0],[0.9,758,990,536,775,151,1369,793,0,0],[1,789,914,484,768,126,1390,807,0,0]],"14":[[0.5,12510,4292,0,0,916,0,0,0,2093],[0.6,9192,3343,0,0,916,0,0,0,2284],[0.7,6355,2522,0,0,907,0,0,0,2183],[0.8,4277,1912,16,0,998,0,0,0,1941],[0.9,2866,1486,52,0,770,0,0,0,1665],[1,1937,1191,88,0,698,0,0,0,1406]],"15":[[0.5,1620,0,1225,1208,262,0,1309,0,0],[0.6,1676,0,1108,1214,267,0,1341,0,0],[0.7,1800,0,983,1208,239,0,1394,0,0],[0.8,1895,0,870,1196,196,0,1426,0,0],[0.9,1941,0,776,1189,138,0,1430,0,0],[1,1937,0,698,1191,88,0,1406,0,0]],"16":[[0.5,36620,0,409,0,1873,0,0,0,6703],[0.6,17450,0,415,0,1580,0,0,0,4622],[0.7,9241,0,409,0,1384,0,0,0,3353],[0.8,5274,0,393,0,1248,0,0,0,2521],[0.9,3182,0,368,0,1150,0,0,0,1945],[1,2005,0,337,0,1078,0,0,0,1533]],"17":[[0.5,1651,0,1334,0,406,0,1334,0,0],[0.6,1654,0,1304,0,407,0,1336,0,0],[0.7,1678,0,1250,0,396,0,1357,0,0],[0.8,1795,0,1187,0,392,0,1422,0,0],[0.9,1908,0,1128,0,369,0,1482,0,0],[1,2005,0,1078,0,337,0,1533,0,0]],"18":[[0.5,18680,3572,0,1699,0,5625,0,3505,0],[0.6,18820,3095,0,1705,0,5527,0,3503,0],[0.7,17770,2709,0,1734,0,5191,0,3566,0],[0.8,15920,2358,0,1760,0,4692,0,3626,0],[0.9,13660,2026,0,1758,0,4113,0,3621,0],[1,11330,1720,0,1720,0,3528,0,3528,0]]},"maciza":{"1":[[0.5,293,829,411,563,214,0,0,0,0],[0.6,273,794,386,563,214,0,0,0,0],[0.7,244,736,347,563,214,0,0,0,0],[0.8,211,664,303,556,214,0,0,0,0],[0.9,178,587,257,538,214,0,0,0,0],[1,147,512,214,512,214,0,0,0,0]],"2":[[0.5,536,1150,613,795,287,0,0,0,0],[0.6,460,1030,532,788,287,0,0,0,0],[0.7,379,903,443,762,287,0,0,0,0],[0.8,304,772,359,721,287,0,0,0,0],[0.9,239,652,286,669,282,0,0,0,0],[1,186,549,225,611,269,0,0,0,0]],"3":[[0.5,298,838,418,566,225,0,0,0,0],[0.6,286,819,402,566,225,0,0,0,0],[0.7,266,782,376,566,225,0,0,0,0],[0.8,241,732,343,566,225,0,0,0,0],[0.9,213,673,306,561,225,0,0,0,0],[1,186,611,269,549,225,0,0,0,0]],"4":[[0.5,976,0,850,1180,414,0,0,0,0],[0.6,748,0,666,1100,414,0,0,0,0],[0.7,557,0,508,1010,408,0,0,0,0],[0.8,410,0,382,900,385,0,0,0,0],[0.9,301,0,287,795,353,0,0,0,0],[1,222,0,217,697,319,0,0,0,0]],"5":[[0.5,301,842,422,0,217,0,0,0,0],[0.6,294,834,413,0,217,0,0,0,0],[0.7,281,813,397,0,217,0,0,0,0],[0.8,264,781,374,0,217,0,0,0,0],[0.9,243,742,348,0,217,0,0,0,0],[1,222,697,319,0,217,0,0,0,0]],"6":[[0.5,561,1180,641,797,306,0,0,0,0],[0.6,504,1100,579,797,306,0,0,0,0],[0.7,438,1010,508,786,306,0,0,0,0],[0.8,371,897,435,764,306,0,0,0,0],[0.9,309,791,367,731,306,0,0,0,0],[1,254,691,306,691,306,0,0,0,0]],"7":[[0.5,581,1210,661,0,318,0,0,0,0],[0.6,538,1160,617,0,318,0,0,0,0],[0.7,487,1090,562,0,318,0,0,0,0],[0.8,433,1000,504,0,318,0,0,0,0],[0.9,380,920,446,0,318,0,0,0,0],[1,329,836,391,0,318,0,0,0,0]],"8":[[0.5,1079,0,932,1200,433,0,0,0,0],[0.6,879,0,774,1160,433,0,0,0,0],[0.7,698,0,628,1090,433,0,0,0,0],[0.8,546,0,502,1010,430,0,0,0,0],[0.9,424,0,400,923,414,0,0,0,0],[1,329,0,318,836,391,0,0,0,0]],"9":[[0.5,1167,0,1000,0,449,0,0,0,0],[0.6,999,0,871,0,449,0,0,0,0],[0.7,838,0,744,0,449,0,0,0,0],[0.8,694,0,629,0,449,0,0,0,0],[0.9,571,0,528,0,449,0,0,0,0],[1,468,0,443,0,443,0,0,0,0]],"10":[[0.5,3421,2060,281,1450,531,0,0,2810,1030],[0.6,2018,1500,269,1260,531,0,0,2230,910],[0.7,1216,1130,237,1090,483,0,0,1750,767],[0.8,757,872,202,936,429,0,0,1390,635],[0.9,487,692,170,805,377,0,0,1120,524],[1,324,562,143,696,330,0,0,909,434]],"11":[[0.5,325,832,417,563,151,911,440,0,0],[0.6,325,820,408,563,151,911,440,0,0],[0.7,325,798,393,563,150,911,440,0,0],[0.8,325,769,374,563,149,911,440,0,0],[0.9,325,734,353,563,147,911,439,0,0],[1,324,696,330,562,143,909,434,0,0]],"12":[[0.5,4725,2570,295,1570,612,0,0,3250,1140],[0.6,3070,1980,309,1430,612,0,0,2740,1110],[0.7,2002,1540,292,1290,596,0,0,2280,1010],[0.8,1325,1210,260,1150,556,0,0,1890,889],[0.9,895,973,227,1010,508,0,0,1560,769],[1,617,795,196,898,459,0,0,1310,661]],"13":[[0.5,672,1210,669,802,217,1370,734,0,0],[0.6,672,1160,635,802,216,1370,732,0,0],[0.7,667,1110,593,802,214,1360,725,0,0],[0.8,657,1040,549,802,210,1350,711,0,0],[0.9,640,968,504,799,204,1330,689,0,0],[1,617,898,459,795,196,1310,661,0,0]],"14":[[0.5,6188,3090,337,0,661,0,0,0,1220],[0.6,4440,2530,337,0,661,0,0,0,1220],[0.7,3170,2070,337,0,661,0,0,0,1210],[0.8,2270,1700,324,0,661,0,0,0,1140],[0.9,1639,1410,298,0,640,0,0,0,1050],[1,1196,1170,269,0,605,0,0,0,949]],"15":[[0.5,1607,0,1080,1230,336,0,1290,0,0],[0.6,1561,0,985,1230,332,0,1250,0,0],[0.7,1492,0,884,1230,323,0,1190,0,0],[0.8,1404,0,785,1220,310,0,1120,0,0],[0.9,1303,0,692,1200,290,0,1040,0,0],[1,1196,0,605,1170,269,0,949,0,0]],"16":[[0.5,11840,0,855,0,1530,0,0,0,2300],[0.6,7076,0,713,0,1370,0,0,0,2000],[0.7,4448,0,592,0,1200,0,0,0,1720],[0.8,2911,0,491,0,1060,0,0,0,1480],[0.9,1970,0,408,0,932,0,0,0,1270],[1,1372,0,343,0,821,0,0,0,1090]],"17":[[0.5,1620,0,1150,0,366,0,1300,0,0],[0.6,1594,0,1080,0,365,0,1280,0,0],[0.7,1553,0,1020,0,362,0,1240,0,0],[0.8,1501,0,950,0,358,0,1200,0,0],[0.9,1439,0,884,0,352,0,1150,0,0],[1,1372,0,821,0,343,0,1090,0,0]],"18":[[0.5,11620,3430,0,1740,0,4760,0,4150,0],[0.6,10010,2860,0,1700,0,4420,0,4000,0],[0.7,8415,2380,0,1640,0,4050,0,3780,0],[0.8,6973,1990,0,1570,0,3670,0,3520,0],[0.9,5733,1680,0,1500,0,3310,0,3240,0],[1,4697,1440,0,1440,0,2970,0,2970,0]]}};
+// Motor de cálculo: misma lógica que el paquete Python `losas` (bidireccional, Tablas 9.7 / 9.5).
+const COEF = ["delta","my_neg","my_pos","mx_neg","mx_pos","myb_neg","myb_pos","mxb_neg","mxb_pos"];
+const BORDES = ["norte","sur","este","oeste"];
+const OPUESTO = {norte:"sur", sur:"norte", este:"oeste", oeste:"este"};
+const SIN_LIBRE = {"cc|cc":1,"cd|cc":2,"cc|cd":3,"dd|cc":4,"cc|dd":5,"cd|cd":6,"cd|dd":7,"dd|cd":8,"dd|dd":9};
+const LIBRE_LARGO = {"c|cc":10,"c|cd":12,"c|dd":14,"d|dd":16};
+const LIBRE_CORTO = {"c|cc":11,"c|cd":13,"c|dd":15,"d|dd":17};
+const par = (a,b) => [a[0],b[0]].sort().join("");
+
+function deducirTipo(l, c) {
+  const ll = l.filter(x=>x==="libre").length, lc = c.filter(x=>x==="libre").length;
+  if (!ll && !lc) return SIN_LIBRE[par(...l)+"|"+par(...c)];
+  if (ll===1 && !lc) return LIBRE_LARGO[l.find(x=>x!=="libre")[0]+"|"+par(...c)] ?? null;
+  if (lc===1 && !ll) return LIBRE_CORTO[c.find(x=>x!=="libre")[0]+"|"+par(...l)] ?? null;
+  if (ll===1 && lc===1) { const o=[...l,...c].filter(x=>x!=="libre"); return o.every(x=>x==="continuo")?18:null; }
+  return null;
+}
+
+function coeficientes(tabla, tipo, beta) {
+  const f = TABLAS[tabla][tipo];
+  beta = Math.min(1, Math.max(0.5, beta));
+  for (let i=0;i<f.length-1;i++) {
+    const a=f[i], b=f[i+1];
+    if (beta>=a[0]-1e-9 && beta<=b[0]+1e-9) {
+      const t=(beta-a[0])/(b[0]-a[0]); const o={};
+      COEF.forEach((k,j)=>o[k]=a[j+1]+t*(b[j+1]-a[j+1])); return o;
+    }
+  }
+}
+
+const area = d => Math.PI*(d/10)**2/4;
+
+function seccion(L) {
+  const h=L.h;
+  if (L.tipo!=="nervada") return {nervada:false,h,bAla:100,bw:100,el:h,yg:h/2,Ig:100*h**3/12,he:h,porMetro:1,A:100*h};
+  const s=L.s, el=L.el, bw=L.bw, hn=h-el, A=s*el+bw*hn;
+  const yg=(bw*hn*hn/2+s*el*(hn+el/2))/A;
+  const Ig=bw*hn**3/12+bw*hn*(yg-hn/2)**2+s*el**3/12+s*el*(hn+el/2-yg)**2;
+  return {nervada:true,h,bAla:s,bw,el,hn,yg,Ig,he:(12*Ig/s)**(1/3),porMetro:100/s,A};
+}
+
+function pesoPropio(L, g) {
+  if (L.tipo!=="nervada") return {total:L.h/100*g, partes:[["Losa maciza",L.h/100*g]]};
+  const n=100/L.s, hn=L.h-L.el;
+  const loseta=L.el/100*g, nerv=(2*n*L.bw*hn/10000-n*n*(L.bw/100)**2*hn/100)*g;
+  return {total:loseta+nerv+L.pb, partes:[["Loseta",loseta],["Nervios",nerv],["Bloques",L.pb]]};
+}
+
+function disenarFlexion(nombre, Mu, signo, d, D) {
+  const {fc,fy,L,beta1}=D; const nerv=L.tipo==="nervada";
+  let b, Asmin;
+  if (nerv) { const bwm=L.bw*100/L.s; b= signo==="-"?bwm:100; Asmin=Math.max(0.8*Math.sqrt(fc),14)/fy*bwm*d; }
+  else { b=100; const rho= fy<4200?0.002:Math.max(0.0018*4200/fy,0.0014); Asmin=rho*100*L.h; }
+  let Asreq=0;
+  if (Mu>0) { const disc=d*d-2*Mu*100/(0.9*0.85*fc*b); Asreq= disc<0?null:0.85*fc*b/fy*(d-Math.sqrt(disc)); }
+  const Asdis=Math.max(Asreq??0, Asmin);
+  let n=0, phi, sep=0, Asu, alcanza=true, bcomp, lim, armado;
+  if (nerv) {
+    const need=Asdis*L.s/100; alcanza=false;
+    outer: for (n=1;n<=2;n++) for (const p of D.diam) if (n*area(p)>=need-1e-6) { phi=p; alcanza=true; break outer; }
+    if (!alcanza) { n=2; phi=D.diam[D.diam.length-1]; }
+    Asu=n*area(phi); bcomp= signo==="-"?L.bw:L.s; lim= signo==="-"?L.h-L.el:L.el; armado=`${n}Ø${phi}`;
+  } else {
+    const smax=Math.min(2*L.h,45); alcanza=false;
+    for (const p of D.diam) { const s=Math.min(Math.floor(area(p)*100/Asdis/2.5+1e-9)*2.5,smax); if (s>=10){phi=p;sep=s;alcanza=true;break;} }
+    if (!alcanza){ phi=D.diam[D.diam.length-1]; sep=Math.max(Math.floor(area(phi)*100/Asdis/2.5)*2.5,2.5); alcanza=sep>=5; }
+    Asu=area(phi)*100/sep; bcomp=100; lim=d; armado=`Ø${phi} @ ${String(sep).replace(".",",")} cm`;
+  }
+  const a=Asu*fy/(0.85*fc*bcomp), c=a/beta1, eps=0.003*(d-c)/c;
+  const cumple= Asreq!==null && alcanza && a<=lim+1e-9 && eps>=0.005;
+  return {nombre,Mu,signo,b,d,Asreq,Asmin,Asdis,phi,n,sep,Asu,Ascol:nerv?Asu*100/L.s:Asu,a,lim,eps,armado,cumple,constructivo:Mu<=0};
+}
+
+function seccionFisurada(sec, D, signo, Asu, d) {
+  const nAs=D.Es/D.E*Asu;
+  let b,bw,tf,yt;
+  if (signo==="+") { b=sec.bAla; bw=sec.bw; tf=sec.el; yt=sec.yg; } else { b=sec.bw; bw=sec.bw; tf=sec.h; yt=sec.h-sec.yg; }
+  let c=(-nAs+Math.sqrt(nAs*nAs+2*b*nAs*d))/b;
+  if (c>tf && b!==bw) { const A=bw/2, B=(b-bw)*tf+nAs, C=-((b-bw)*tf*tf/2+nAs*d); c=(-B+Math.sqrt(B*B-4*A*C))/(2*A); }
+  let Icr=b*c**3/3+nAs*(d-c)**2; if (c>tf && b!==bw) Icr-=(b-bw)*(c-tf)**3/3;
+  Icr=Math.min(Icr,sec.Ig);
+  return {Ig:sec.Ig,yt,Icr,Mcr:2*Math.sqrt(D.fc)*sec.Ig/yt,c};
+}
+function Ie(Ma, sf){ if (Ma<=2/3*sf.Mcr) return sf.Ig; return sf.Icr/(1-((2/3)*sf.Mcr/Ma)**2*(1-sf.Icr/sf.Ig)); }
+
+// ---------------------------------------------------------------- piso completo
+// datos: {fc,fy,g,rec,L:{tipo,h,el,bw,s,pb},sc,viva,mamp,lambda,vb,vh,dx[],dy[],bordes:{v:[[...]],h:[[...]]}}
+// bordes.v[j][k]: borde vertical en el eje x=k (0..nx) de la fila j; bordes.h[i][k]: horizontal en y=k de la columna i.
+function calcularPiso(D) {
+  D.E=15000*Math.sqrt(D.fc); D.Es=2e6;
+  D.beta1=Math.max(0.65,Math.min(0.85,0.85-0.05*(D.fc-280)/70));
+  D.diam= D.L.tipo==="nervada"?[12,14,16,18,20]:[10,12,14,16];
+  const sec=seccion(D.L), pp=pesoPropio(D.L,D.g);
+  const Dc=pp.total+D.sc, qu=Math.max(1.4*Dc,1.2*Dc+1.6*D.viva);
+  const combo= 1.4*Dc>1.2*Dc+1.6*D.viva?"1,4D":"1,2D + 1,6L";
+  const cargas={pp:pp.total,partes:pp.partes,sc:D.sc,D:Dc,L:D.viva,qu,combo};
+  const nx=D.dx.length, ny=D.dy.length;
+  const geo={nervios:[]};
+  if (D.L.tipo==="nervada") {
+    const lib=D.L.s-D.L.bw;
+    geo.nervios=[["Ancho de nervio bw ≥ 10 cm",D.L.bw,10,D.L.bw>=10],["Altura h ≤ 3,5·bw",D.L.h,3.5*D.L.bw,D.L.h<=3.5*D.L.bw],
+      ["Separación libre ≤ 75 cm",lib,75,lib<=75],["Loseta ≥ máx(5 ; libre/12)",D.L.el,Math.max(5,lib/12),D.L.el>=Math.max(5,lib/12)]];
+  }
+  const panos=[];
+  for (let j=0;j<ny;j++) for (let i=0;i<nx;i++) {
+    const W=D.dx[i], H=D.dy[j];
+    const cond={oeste:D.bordes.v[j][i], este:D.bordes.v[j][i+1], sur:D.bordes.h[i][j], norte:D.bordes.h[i][j+1]};
+    const vec={oeste:i>0?[i-1,j]:null, este:i<nx-1?[i+1,j]:null, sur:j>0?[i,j-1]:null, norte:j<ny-1?[i,j+1]:null};
+    const p={id:`P${j*nx+i+1}`,i,j,W,H,cond,vec,motivos:[]};
+    if (W<=H+1e-6) Object.assign(p,{Lx:W,Ly:H,dir:"X",largos:["oeste","este"],cortos:["sur","norte"]});
+    else Object.assign(p,{Lx:H,Ly:W,dir:"Y",largos:["sur","norte"],cortos:["oeste","este"]});
+    p.beta=p.Lx/p.Ly;
+    const libres=BORDES.filter(b=>cond[b]==="libre");
+    if (libres.length>=3) p.motivos.push("Tres o más bordes libres: es un voladizo.");
+    else if (p.beta<0.5) p.motivos.push("Lx/Ly < 0,5: trabaja en una dirección. Use el programa completo (viga continua).");
+    else if (p.largos.every(b=>cond[b]==="libre")||p.cortos.every(b=>cond[b]==="libre")) p.motivos.push("Apoyado solo en dos bordes opuestos: trabaja en una dirección. Use el programa completo.");
+    else {
+      p.tipo=deducirTipo(p.largos.map(b=>cond[b]), p.cortos.map(b=>cond[b]));
+      if (!p.tipo) p.motivos.push("Combinación de bordes que no está en la tabla de coeficientes.");
+    }
+    // rigidez de vigas
+    const Iv=D.vb*D.vh**3/12;
+    p.alfas={};
+    for (const b of BORDES) {
+      if (cond[b]==="libre") { p.alfas[b]=0; continue; }
+      const propio=(b==="norte"||b==="sur"?H:W)*100;
+      let ancho;
+      if (vec[b]) { const [a,c]=vec[b]; const q=(b==="norte"||b==="sur")?D.dy[c]:D.dx[a]; ancho=(propio+q*100)/2; }
+      else ancho=(propio+D.vb)/2;
+      p.alfas[b]=Iv/(sec.Ig*ancho/sec.bAla);
+    }
+    p.am=BORDES.reduce((s,b)=>s+p.alfas[b],0)/4;
+    if (!p.motivos.length && p.am<0.2) p.motivos.push(`Vigas muy flexibles (αm = ${p.am.toFixed(2)} < 0,2): se comporta como losa plana.`);
+    p.calculado=!p.motivos.length;
+    if (p.calculado) {
+      const c=coeficientes(D.L.tipo,p.tipo,p.beta); p.coef=c;
+      const k=0.0001*qu*p.Lx**2;
+      p.M={}; for (const n of COEF.slice(1)) p.M[n]=k*c[n];
+      const negC=Math.max(p.M.my_neg,p.M.myb_neg), negL=Math.max(p.M.mx_neg,p.M.mxb_neg);
+      p.Mpos={corta:Math.max(p.M.my_pos,p.M.myb_pos), larga:Math.max(p.M.mx_pos,p.M.mxb_pos)};
+      p.Mborde={}; for (const b of BORDES) p.Mborde[b]= cond[b]==="continuo"?(p.largos.includes(b)?negC:negL):0;
+    }
+    panos.push(p);
+  }
+  const at=(i,j)=>panos[j*nx+i];
+  // compatibilidad
+  const comunes=[];
+  for (const p of panos) if (p.calculado) {
+    p.Mdis={}; p.origen={};
+    for (const b of BORDES) {
+      if (p.cond[b]==="libre") continue;
+      let M=p.Mborde[b], o="propio";
+      if (p.vec[b]) { const q=at(...p.vec[b]); if (q.calculado){ const Mq=q.Mborde[OPUESTO[b]]; if (Mq>M){M=Mq;o="vecino "+q.id;} } }
+      p.Mdis[b]=M; p.origen[b]=o;
+    }
+  }
+  // diseño
+  for (const p of panos) if (p.calculado) {
+    const r=D.rec, h=D.L.h;
+    const mom={pos_corta:[p.Mpos.corta,"+","corta"],pos_larga:[p.Mpos.larga,"+","larga"]};
+    for (const b of BORDES) if (p.cond[b]!=="libre") mom["neg_"+b]=[p.Mdis[b],"-",p.largos.includes(b)?"corta":"larga"];
+    let phi={corta:D.diam[0],larga:D.diam[0]}, dis;
+    const alt=()=>({corta:h-r-phi.corta/20, larga:h-r-phi.corta/10-phi.larga/20});
+    const nombre=k=>k==="pos_corta"?"M+ dirección corta":k==="pos_larga"?"M+ dirección larga":"M− borde "+k.slice(4);
+    for (let it=0;it<12;it++){
+      const d=alt(); dis={};
+      for (const [k,[M,s,dr]] of Object.entries(mom)) dis[k]=disenarFlexion(nombre(k),M,s,d[dr],D);
+      const nu={}; for (const dr of ["corta","larga"]) nu[dr]=Math.max(phi[dr],...Object.entries(dis).filter(([k])=>mom[k][2]===dr).map(([,x])=>x.phi));
+      if (nu.corta===phi.corta&&nu.larga===phi.larga) break; phi=nu;
+    }
+    p.d=alt(); p.flex={};
+    for (const [k,[M,s,dr]] of Object.entries(mom)) p.flex[k]=disenarFlexion(nombre(k),M,s,p.d[dr],D);
+    // cortante
+    const d=p.d.corta, bvm=D.vb;
+    const unApoyo=p.largos.some(b=>p.cond[b]==="libre");
+    const Vcara=qu*((unApoyo?p.Lx:p.Lx/2)-bvm/200);
+    const Vu=Math.max(0,Vcara-qu*d/100);
+    const nerv=D.L.tipo==="nervada";
+    const bc= nerv?D.L.bw*100/D.L.s:100;
+    const fac= nerv && D.L.bw>=10 && D.L.h<=3.5*D.L.bw && D.L.s-D.L.bw<=75 ? 1.1:1;
+    const vc0=0.53*Math.sqrt(D.fc), vc=fac*vc0, vu=Vu/(0.75*bc*d);
+    let estado= vu<=vc?"CUMPLE":"NO CUMPLE", Vumac=0, vumac=0;
+    if (vu>vc && nerv) {
+      Vumac=Math.max(0,Vcara-qu*D.mac); vumac=Vumac/(0.75*bc*d);
+      const vs=Vu/(0.75*100*d);
+      estado= (vumac<=vc && vs<=vc0 && D.mac*100>d)?"CUMPLE con macizado":"NO CUMPLE";
+    }
+    p.cort={Vcara,Vu,vu,vc,fac,bc,estado,Vumac,vumac,phiVc:0.75*vc*bc*d,unApoyo};
+    // flechas
+    const c=p.coef, mp=Math.max(c.my_pos,c.myb_pos), positivo=mp>0;
+    const m= positivo?mp:Math.max(c.my_neg,c.myb_neg);
+    const dsel= positivo?p.flex.pos_corta: p.largos.map(b=>p.flex["neg_"+b]).filter(Boolean).sort((a,b)=>b.Asu-a.Asu)[0];
+    const kd=0.0001*c.delta*(p.Lx*100)**4/(D.E*sec.he**3)/10000;
+    const kM=0.0001*m*p.Lx**2*100/sec.porMetro;
+    const sf=seccionFisurada(sec,D,positivo?"+":"-",dsel.Asu,dsel.d);
+    const niv=q=>({d:kd*q,M:kM*q});
+    const nD=niv(Dc), nDL=niv(Dc+D.viva);
+    const IeD=Ie(nD.M,sf), IeDL=Ie(nDL.M,sf);
+    const fD=nD.d*sf.Ig/IeD, fDL=nDL.d*sf.Ig/IeDL, fL=Math.abs(fDL-fD), fS=Math.abs(fD);
+    const den=D.mamp?480:240;
+    p.flecha={el:nDL.d,fD,fDL,fL,fS,flp:D.lambda*fS+fL,limL:p.Lx*100/360,limLp:p.Lx*100/den,den,IeIg:IeDL/sf.Ig,sf,Ma:nDL.M};
+    // altura mínima
+    const lnc=p.Lx*100-D.vb, lnl=p.Ly*100-D.vb, be=lnl/lnc, kk=0.8+D.fy/14000;
+    let hm, hmin0;
+    if (p.am>2){hm=lnl*kk/(36+9*be);hmin0=9;} else {hm=lnl*kk/(36+5*be*(p.am-0.2));hmin0=12.5;}
+    let hmin=Math.max(hm,hmin0);
+    const deb=[...p.largos,...p.cortos].filter(b=>p.cond[b]!=="continuo"&&p.alfas[b]<0.8);
+    if (deb.length) hmin*=1.1;
+    p.hmin={valor:sec.nervada?sec.he:sec.h,hmin,cumple:(sec.nervada?sec.he:sec.h)>=hmin,am:p.am,beta:be};
+    // índices
+    const idx=[];
+    for (const x of Object.values(p.flex)) if (!x.constructivo) idx.push({n:`${x.nombre} (${x.armado})`,g:"Flexión",v:x.Asreq===null?9.99:x.Asdis/x.Ascol,ok:x.cumple});
+    if (estado==="CUMPLE con macizado"){ idx.push({n:"Cortante a d, sin macizar",g:"Cortante",v:vu/vc,ok:true,aviso:true}); idx.push({n:"Cortante en el borde del macizado",g:"Cortante",v:vumac/vc,ok:true}); }
+    else idx.push({n:"Cortante en nervios",g:"Cortante",v:vu/vc,ok:estado==="CUMPLE"});
+    idx.push({n:"Flecha por carga viva",g:"Flechas",v:fL/p.flecha.limL,ok:fL<=p.flecha.limL});
+    idx.push({n:"Flecha diferida",g:"Flechas",v:p.flecha.flp/p.flecha.limLp,ok:p.flecha.flp<=p.flecha.limLp});
+    idx.push({n:"Altura mínima / altura",g:"Altura",v:hmin/p.hmin.valor,ok:p.hmin.cumple});
+    p.idx=idx;
+    p.cumple= idx.every(x=>x.ok) && geo.nervios.every(x=>x[3]);
+  }
+  return {sec,cargas,panos,geo,nx,ny,D};
+}
+const $=id=>document.getElementById(id);
+const nf=(x,d=2)=>x==null||!isFinite(x)?"-":x.toLocaleString("es-EC",{minimumFractionDigits:d,maximumFractionDigits:d});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pill=(t)=>{const c=t.startsWith("NO")?"bad":t.startsWith("CUMPLE con")||t.startsWith("FUERA")||t.startsWith("INCOMPLETO")?"warn":t.startsWith("CUMPLE")?"ok":"gris";return `<span class="pill ${c}">${esc(t)}</span>`;};
+
+function bordesDefecto(nx,ny){return {v:Array.from({length:ny},()=>Array.from({length:nx+1},(_,k)=>k===0||k===nx?"discontinuo":"continuo")),
+  h:Array.from({length:nx},()=>Array.from({length:ny+1},(_,k)=>k===0||k===ny?"discontinuo":"continuo"))};}
+const BASE={fc:210,fy:4200,g:2400,rec:2.5,tipo:"nervada",h:20,el:5,bw:10,s:50,pb:128,mac:0.425,lambda:2,vb:25,vh:45,dx:"5 5 5",dy:"4 5"};
+const PRESETS={
+  oficinas:{...BASE,sc:340,viva:250,mamp:true},
+  terraza:{...BASE,sc:100,viva:100,mamp:false},
+  referencia:{...BASE,pb:96,sc:150,viva:250,mamp:true,vb:30,vh:35,dx:"4",dy:"5",bordes:{v:[["discontinuo","continuo"]],h:[["discontinuo","continuo"]]}},
+};
+const CAMPOS=["fc","fy","g","rec","tipo","h","el","bw","s","pb","mac","sc","viva","lambda","vb","vh","dx","dy","mamp"];
+let estado={...PRESETS.oficinas}, bordes=null, sel=0, R=null;
+const lista=t=>String(t).trim().split(/[\s;]+/).map(x=>parseFloat(x.replace(",","."))).filter(x=>x>0);
+
+function guardar(){try{localStorage.setItem("losas-vivo",JSON.stringify({estado,bordes,sel,preset:$("preset").value}));}catch(e){}}
+function cargar(){try{const o=JSON.parse(localStorage.getItem("losas-vivo")||"null");if(o&&o.estado){estado=o.estado;bordes=o.bordes;sel=o.sel||0;$("preset").value=o.preset||"oficinas";}}catch(e){}}
+
+function aFormulario(){for(const k of CAMPOS){const e=$(k); if(e.type==="checkbox") e.checked=!!estado[k]; else e.value=estado[k];}}
+function deFormulario(){for(const k of CAMPOS){const e=$(k); estado[k]= e.type==="checkbox"?e.checked:(["tipo","dx","dy"].includes(k)?e.value:parseFloat(String(e.value).replace(",",".")));}}
+
+function datos(){
+  const dx=lista(estado.dx), dy=lista(estado.dy);
+  const nx=dx.length, ny=dy.length;
+  if (!bordes||bordes.v.length!==ny||bordes.v[0].length!==nx+1||bordes.h.length!==nx) bordes=bordesDefecto(nx,ny);
+  return {fc:estado.fc,fy:estado.fy,g:estado.g,rec:estado.rec,L:{tipo:estado.tipo,h:estado.h,el:estado.el,bw:estado.bw,s:estado.s,pb:estado.pb},
+    sc:estado.sc,viva:estado.viva,mamp:estado.mamp,lambda:estado.lambda,vb:estado.vb,vh:estado.vh,mac:estado.mac,dx,dy,bordes};
+}
+function validar(D){
+  const e=[];
+  if(!D.dx.length||!D.dy.length) e.push("Escriba al menos una distancia en X y otra en Y.");
+  if(D.dx.length*D.dy.length>36) e.push("Máximo 36 paños en esta página.");
+  for(const k of ["fc","fy","g","vb","vh"]) if(!(D[k]>0)) e.push(`Revise ${k}.`);
+  if(!(D.L.h>0)) e.push("La altura debe ser positiva.");
+  if(D.L.tipo==="nervada"){ if(!(D.L.el>0&&D.L.el<D.L.h)) e.push("La loseta debe ser mayor que 0 y menor que la altura.");
+    if(!(D.L.bw>0&&D.L.bw<D.L.s)) e.push("El ancho de nervio debe ser menor que la separación de nervios."); }
+  if(!(D.sc>=0&&D.viva>=0)) e.push("Las cargas no pueden ser negativas.");
+  if(!(D.rec>0&&D.rec<D.L.h/2)) e.push("Revise el recubrimiento.");
+  return e;
+}
+
+// ------------------------------------------------------------ dibujo
+const CICLO={continuo:"discontinuo",discontinuo:"libre",libre:"continuo"};
+function estiloBorde(c){return c==="continuo"?`stroke="var(--fg)" stroke-width="5"`:c==="discontinuo"?`stroke="var(--accent)" stroke-width="3" stroke-dasharray="10 6"`:`stroke="var(--bad)" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round"`;}
+function estadoPano(p){return !p.calculado?"FUERA DE ALCANCE":p.cumple?(p.cort.estado==="CUMPLE con macizado"?"CUMPLE con macizado":"CUMPLE"):"NO CUMPLE";}
+function colorPano(p){const e=estadoPano(p);return e.startsWith("NO")?"var(--bad-soft)":e==="CUMPLE"?"var(--ok-soft)":e.startsWith("CUMPLE")?"var(--warn-soft)":"var(--grid)";}
+
+function dibujarPlanta(){
+  const {D,panos,nx,ny}=R; const X=[0],Y=[0];
+  D.dx.forEach(d=>X.push(X.at(-1)+d)); D.dy.forEach(d=>Y.push(Y.at(-1)+d));
+  const k=Math.min(140,760/Math.max(X.at(-1),Y.at(-1))), m=70, W=X.at(-1)*k, H=Y.at(-1)*k, vw=W+2*m+30, vh=H+2*m+20;
+  const sx=x=>m+x*k, sy=y=>m+H-y*k; let o="";
+  X.forEach((x,i)=>{o+=`<line x1="${sx(x)}" y1="${m-34}" x2="${sx(x)}" y2="${m+H+18}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="8 4 2 4"/><circle cx="${sx(x)}" cy="${m-48}" r="15" fill="var(--panel)" stroke="var(--fg)"/><text x="${sx(x)}" y="${m-43}" text-anchor="middle" font-size="16" font-weight="600">${String.fromCharCode(65+i)}</text>`;});
+  Y.forEach((y,j)=>{o+=`<line x1="${m-34}" y1="${sy(y)}" x2="${m+W+18}" y2="${sy(y)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="8 4 2 4"/><circle cx="${m-48}" cy="${sy(y)}" r="15" fill="var(--panel)" stroke="var(--fg)"/><text x="${m-48}" y="${sy(y)+5}" text-anchor="middle" font-size="16" font-weight="600">${j+1}</text>`;});
+  D.dx.forEach((d,i)=>o+=`<text x="${sx(X[i]+d/2)}" y="${m+H+40}" text-anchor="middle" font-size="15" font-family="var(--f-num)">${nf(d)}</text>`);
+  D.dy.forEach((d,j)=>o+=`<text x="${m+W+36}" y="${sy(Y[j]+d/2)}" text-anchor="middle" font-size="15" font-family="var(--f-num)" transform="rotate(-90 ${m+W+36} ${sy(Y[j]+d/2)})">${nf(d)}</text>`);
+  panos.forEach((p,n)=>{
+    const x0=sx(X[p.i]),x1=sx(X[p.i+1]),y0=sy(Y[p.j+1]),y1=sy(Y[p.j]);
+    o+=`<g class="borde" data-p="${n}" tabindex="0" role="button" aria-label="Paño ${p.id}"><rect class="anim" x="${x0+3}" y="${y0+3}" width="${x1-x0-6}" height="${y1-y0-6}" fill="${colorPano(p)}" ${n===sel?'stroke="var(--accent)" stroke-width="4"':''}/>`;
+    const cx=(x0+x1)/2, cy=(y0+y1)/2;
+    o+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="18" font-weight="700">${p.id}</text>`;
+    o+=`<text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="14">${p.calculado?"Tipo "+p.tipo:"No calculado"}</text>`;
+    o+=`<text x="${cx}" y="${cy+28}" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--f-num)">Lx/Ly ${nf(p.beta)}</text></g>`;
+  });
+  // bordes clicables
+  for(let j=0;j<ny;j++) for(let kx=0;kx<=nx;kx++){const c=bordes.v[j][kx]; const x=sx(X[kx]), a=sy(Y[j+1])+8, b=sy(Y[j])-8;
+    o+=`<g class="borde" data-b="v,${j},${kx}" tabindex="0" role="button" aria-label="Borde vertical eje ${String.fromCharCode(65+kx)}, ${c}"><line x1="${x}" y1="${a}" x2="${x}" y2="${b}" ${estiloBorde(c)}/><line x1="${x}" y1="${a}" x2="${x}" y2="${b}" stroke="transparent" stroke-width="26"/></g>`;}
+  for(let i=0;i<nx;i++) for(let ky=0;ky<=ny;ky++){const c=bordes.h[i][ky]; const y=sy(Y[ky]), a=sx(X[i])+8, b=sx(X[i+1])-8;
+    o+=`<g class="borde" data-b="h,${i},${ky}" tabindex="0" role="button" aria-label="Borde horizontal eje ${ky+1}, ${c}"><line x1="${a}" y1="${y}" x2="${b}" y2="${y}" ${estiloBorde(c)}/><line x1="${a}" y1="${y}" x2="${b}" y2="${y}" stroke="transparent" stroke-width="26"/></g>`;}
+  $("planta").innerHTML=`<svg viewBox="0 0 ${vw} ${vh}" role="img" aria-label="Planta del piso">${o}</svg>`;
+}
+
+// curva esquemática de momentos (misma que el programa)
+function curva(M1,M2,Mp,n=61){const xs=[...Array(n)].map((_,i)=>i/(n-1));const f=k=>xs.map(x=>-M1*(1-x)-M2*x+4*k*x*(1-x));
+  if(Mp<=0) return [xs,f(0)]; let a=0,b=Mp+Math.max(M1,M2)+1; for(let i=0;i<60;i++){const k=(a+b)/2; Math.max(...f(k))<Mp?a=k:b=k;} return [xs,f((a+b)/2)];}
+
+function figMomentos(p,dir){
+  const [b0,b1]= dir==="corta"?p.largos:p.cortos, L= dir==="corta"?p.Lx:p.Ly;
+  const eje= dir==="corta"?p.dir:(p.dir==="X"?"Y":"X");
+  const M1=p.Mdis[b0]??0, M2=p.Mdis[b1]??0, Mp=p.Mpos[dir];
+  const W=560,H=250,ml=56,mr=14,mt=48,mb=48, esc=Math.max(M1,M2,Mp,1);
+  const top=-Math.max(M1,M2)-0.15*esc, bot=Mp+0.3*esc;
+  const X=x=>ml+x/L*(W-ml-mr), Yv=v=>mt+(v-top)/(bot-top)*(H-mt-mb);
+  let o=`<line x1="${ml}" y1="${Yv(0)}" x2="${W-mr}" y2="${Yv(0)}" stroke="var(--fg)" stroke-width="1.4"/>`;
+  for(const t of [0,0.25,0.5,0.75,1]) o+=`<text x="${X(t*L)}" y="${H-24}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--f-num)">${nf(t*L,1)}</text>`;
+  o+=`<text x="${(W+ml)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)">Posición en ${eje} (m)</text>`;
+  const libre= p.cond[b0]==="libre"||p.cond[b1]==="libre";
+  if(!libre){const [xs,ms]=curva(M1,M2,Mp); const pts=xs.map((x,i)=>`${X(x*L)},${Yv(ms[i])}`).join(" ");
+    o+=`<clipPath id="cp-${dir}"><rect x="0" y="${Yv(0)}" width="${W}" height="${H}"/></clipPath><clipPath id="cn-${dir}"><rect x="0" y="0" width="${W}" height="${Yv(0)}"/></clipPath>`;
+    o+=`<polygon points="${X(0)},${Yv(0)} ${pts} ${X(L)},${Yv(0)}" fill="var(--inf)" fill-opacity=".22" clip-path="url(#cp-${dir})"/>`;
+    o+=`<polygon points="${X(0)},${Yv(0)} ${pts} ${X(L)},${Yv(0)}" fill="var(--sup)" fill-opacity=".25" clip-path="url(#cn-${dir})"/>`;
+    o+=`<polyline points="${pts}" fill="none" stroke="var(--fg)" stroke-width="1.8"/>`;}
+  else { o+=`<line x1="${X(L/2)}" y1="${Yv(0)}" x2="${X(L/2)}" y2="${Yv(Mp)}" stroke="var(--inf)" stroke-width="6"/>`;
+    for(const [x,M] of [[0,M1],[L,M2]]) if(M) o+=`<line x1="${X(x)}" y1="${Yv(0)}" x2="${X(x)}" y2="${Yv(-M)}" stroke="var(--sup)" stroke-width="6"/>`; }
+  const fp=p.flex["pos_"+dir];
+  o+=`<text x="${X(L/2)}" y="${Math.min(Yv(Mp)+18,H-mb+12)}" text-anchor="middle" font-size="13" fill="var(--inf)" font-weight="600">M+ = ${nf(Mp,0)}  ·  inf. ${fp.armado}${fp.constructivo?" mín.":""}</text>`;
+  [[b0,M1,"start",X(0)+4],[b1,M2,"end",X(L)-4]].forEach(([b,M,a,x])=>{
+    const f=p.flex["neg_"+b]; const t= p.cond[b]==="libre"?`borde ${b}: libre`:`M− = ${nf(M,0)}  ·  sup. ${f.armado}${f.constructivo?" mín.":""}`;
+    o+=`<text x="${x}" y="${18}" text-anchor="${a}" font-size="12.5" fill="${p.cond[b]==="libre"?"var(--muted)":"var(--sup)"}" font-weight="600">${t}</text><text x="${x}" y="${33}" text-anchor="${a}" font-size="11" fill="var(--muted)">borde ${b}</text>`;
+    if(p.cond[b]!=="libre") o+=`<path d="M${a==="start"?X(0):X(L)} ${Yv(0)} l-7 12 h14z" fill="var(--fg)"/>`;});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de momentos dirección ${dir}">${o}</svg>`;
+}
+
+function figSeccion(p){
+  const D=R.D, L=D.L, h=L.h, rec=D.rec, nerv=L.tipo==="nervada";
+  const inf=p.flex.pos_corta, negs=p.largos.map(b=>p.flex["neg_"+b]).filter(Boolean);
+  const sup=negs.sort((a,b)=>(a.constructivo-b.constructivo)||(b.Asu-a.Asu))[0];
+  const ancho= nerv?2*L.s:100, k=Math.min(520/ancho, 160/h/1.0), W=560, gap=h*k+70, H=2*gap+20;
+  const ox=(W-ancho*k)/2; let o=`<defs><pattern id="blk" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="var(--block)"/><circle cx="4" cy="4" r="1.1" fill="var(--block-line)"/></pattern></defs>`;
+  const forma=(y0)=>{ if(!nerv) return `<rect x="${ox}" y="${y0}" width="${ancho*k}" height="${h*k}" fill="var(--concrete)" stroke="var(--fg)" stroke-width="1.5"/>`;
+    const hn=h-L.el, ejes=[L.s/2,1.5*L.s]; let s=`<rect x="${ox}" y="${y0+L.el*k}" width="${ancho*k}" height="${hn*k}" fill="url(#blk)" stroke="var(--block-line)" stroke-width=".8"/>`;
+    let d=`M${ox} ${y0} h${ancho*k} v${L.el*k}`; for(const e of [...ejes].reverse()){d+=` H${ox+(e+L.bw/2)*k} v${hn*k} h${-L.bw*k} v${-hn*k}`;} d+=` H${ox} Z`;
+    return s+`<path d="${d}" fill="var(--concrete)" stroke="var(--fg)" stroke-width="1.5"/>`;};
+  const barras=(dis,y,col,op=1)=>{const r=Math.max(dis.phi/20*k,2.5); let s="";
+    if(nerv){for(const e of [L.s/2,1.5*L.s]) for(let i=0;i<dis.n;i++){const x=ox+(e+(i-(dis.n-1)/2)*Math.max(dis.phi/10+0.6,2.6))*k; s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" fill-opacity="${op}" stroke="var(--fg)" stroke-width=".6"/>`;}}
+    else {for(let x=dis.sep/2;x<100;x+=dis.sep) s+=`<circle cx="${ox+x*k}" cy="${y}" r="${r}" fill="${col}" fill-opacity="${op}" stroke="var(--fg)" stroke-width=".6"/>`;} return s;};
+  const u= nerv?"por nervio":"por metro";
+  // vano
+  let y0=34; o+=`<text x="${W/2}" y="${y0-14}" text-anchor="middle" font-size="13" font-weight="700">En el vano: acero inferior</text>`+forma(y0);
+  const yi=y0+(h-rec-inf.phi/20)*k; o+=barras(inf,yi,"var(--inf)");
+  o+=`<text x="${W/2}" y="${y0+h*k+22}" text-anchor="middle" font-size="13" fill="var(--inf)" font-weight="600">inf. ${inf.armado} ${u}  ·  d = ${nf(inf.d,1)} cm  ·  a = ${nf(inf.a)} cm</text>`;
+  o+=`<text x="${ox-8}" y="${y0+h*k/2+4}" text-anchor="end" font-size="12" font-family="var(--f-num)">h ${nf(h,0)}</text>`;
+  if(nerv) o+=`<text x="${ox+ancho*k+8}" y="${y0+L.el*k/2+4}" font-size="12" font-family="var(--f-num)">el ${nf(L.el,0)}</text><text x="${ox+ancho*k+8}" y="${y0+(L.el+(h-L.el)/2)*k+4}" font-size="12" font-family="var(--f-num)">bw ${nf(L.bw,0)} @ ${nf(L.s,0)}</text>`;
+  // apoyo
+  y0+=gap; o+=`<text x="${W/2}" y="${y0-14}" text-anchor="middle" font-size="13" font-weight="700">Sobre el apoyo: acero superior</text>`+forma(y0)+barras(inf,y0+(h-rec-inf.phi/20)*k,"var(--inf)",.3);
+  if(sup){o+=barras(sup,y0+(rec+sup.phi/20)*k,"var(--sup)");
+    o+=`<text x="${W/2}" y="${y0+h*k+22}" text-anchor="middle" font-size="13" fill="var(--sup)" font-weight="600">sup. ${sup.armado}${sup.constructivo?" mín.":""} ${u}  ·  a = ${nf(sup.a)} cm ${sup.a>sup.lim?"> "+nf(sup.lim,0):""}</text>`;}
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sección de la losa">${o}</svg>`;
+}
+
+function figCortante(p){
+  const c=p.cort, q=R.cargas.qu, d=p.d.corta/100, mac=R.D.mac, nerv=R.D.L.tipo==="nervada";
+  const xf=Math.max(c.Vcara/q, 1.6*Math.max(d,nerv?mac:d));
+  const W=560,H=250,ml=58,mr=14,mt=18,mb=46, top=Math.max(c.Vcara,c.phiVc)*1.2;
+  const X=x=>ml+x/xf*(W-ml-mr), Y=v=>mt+(1-v/top)*(H-mt-mb);
+  let o="";
+  for(const t of [0,.25,.5,.75,1]){o+=`<line x1="${ml}" x2="${W-mr}" y1="${Y(t*top)}" y2="${Y(t*top)}" stroke="var(--grid)"/><text x="${ml-6}" y="${Y(t*top)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--f-num)">${nf(t*top,0)}</text>`;
+    o+=`<text x="${X(t*xf)}" y="${H-26}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--f-num)">${nf(t*xf,2)}</text>`;}
+  o+=`<text x="${(W+ml)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)">Distancia desde la cara de la viga (m) · V en kg/m</text>`;
+  const show=c.estado!=="CUMPLE"&&nerv;
+  if(show) o+=`<rect x="${X(0)}" y="${mt}" width="${X(mac)-X(0)}" height="${H-mt-mb}" fill="var(--warn-soft)"/><text x="${X(mac)+4}" y="${mt+14}" font-size="11" fill="var(--warn)">macizado ${nf(mac,3)} m</text>`;
+  const Vf=Math.max(c.Vcara-q*xf,0);
+  o+=`<line x1="${X(0)}" y1="${Y(c.Vcara)}" x2="${X(xf)}" y2="${Y(Vf)}" stroke="var(--fg)" stroke-width="2"/>`;
+  o+=`<line x1="${X(0)}" y1="${Y(c.phiVc)}" x2="${X(xf)}" y2="${Y(c.phiVc)}" stroke="var(--ok)" stroke-width="2" stroke-dasharray="8 5"/><text x="${W-mr}" y="${Y(c.phiVc)-6}" text-anchor="end" font-size="12" fill="var(--ok)">φ·Vc ${nerv?"de los nervios":""} = ${nf(c.phiVc,0)}</text>`;
+  o+=`<line x1="${X(d)}" x2="${X(d)}" y1="${mt}" y2="${H-mb}" stroke="var(--muted)" stroke-dasharray="2 3"/>`;
+  const col=c.Vu<=c.phiVc?"var(--ok)":c.estado.startsWith("CUMPLE")?"var(--warn)":"var(--bad)";
+  o+=`<circle cx="${X(d)}" cy="${Y(c.Vu)}" r="6" fill="${col}"/><text x="${X(d)+10}" y="${Y(c.Vu)-8}" font-size="12">Vu(d) = ${nf(c.Vu,0)}</text>`;
+  if(show) o+=`<rect x="${X(mac)-5}" y="${Y(c.Vumac)-5}" width="10" height="10" fill="${c.estado.startsWith("CUMPLE")?"var(--ok)":"var(--bad)"}"/><text x="${X(mac)+10}" y="${Y(c.Vumac)+16}" font-size="12">Vu borde macizado = ${nf(c.Vumac,0)}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama de cortante">${o}</svg>`;
+}
+
+function figUso(p){
+  const L=p.idx, W=560, fila=26, H=L.length*fila+40, ml=230, mr=56, top=Math.max(1.3,...L.map(i=>Math.min(i.v,3)*1.1));
+  const X=v=>ml+v/top*(W-ml-mr); let o="";
+  for(const t of [0,.5,1,1.5,2,2.5,3]) if(t<=top) o+=`<line x1="${X(t)}" x2="${X(t)}" y1="6" y2="${H-26}" stroke="var(--grid)"/><text x="${X(t)}" y="${H-10}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--f-num)">${t*100} %</text>`;
+  L.forEach((i,n)=>{const y=10+n*fila, v=Math.min(i.v,3), c=i.aviso?"var(--warn)":i.ok?"var(--ok)":"var(--bad)";
+    o+=`<text x="${ml-8}" y="${y+14}" text-anchor="end" font-size="12">${esc(i.n)}</text><rect class="anim" x="${ml}" y="${y+2}" width="${Math.max(X(v)-ml,1)}" height="${fila-8}" fill="${c}" rx="2"/><text x="${X(v)+5}" y="${y+15}" font-size="11.5" font-family="var(--f-num)">${nf(i.v*100,0)} %</text>`;});
+  o+=`<line x1="${X(1)}" x2="${X(1)}" y1="4" y2="${H-26}" stroke="var(--fg)" stroke-width="1.6"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aprovechamiento">${o}</svg>`;
+}
+
+function figCargas(){
+  const c=R.cargas, W=560, H=140, ml=110, mr=70, tot=Math.max(c.D,c.L,c.qu)*1.05, X=v=>ml+v/tot*(W-ml-mr);
+  const cols=["var(--concrete)","#8FA3B5","var(--block)","#7EA9D1"]; let o="", x=0;
+  const partes=[...c.partes.filter(p=>p[1]>0),["Sobrecarga",c.sc]];
+  partes.forEach((p,i)=>{o+=`<rect x="${X(x)}" y="12" width="${X(x+p[1])-X(x)}" height="28" fill="${cols[i%4]}" stroke="var(--panel)"/>`; if(p[1]/tot>.09) o+=`<text x="${(X(x)+X(x+p[1]))/2}" y="31" text-anchor="middle" font-size="11" fill="#16202B">${p[0]} ${nf(p[1],0)}</text>`; x+=p[1];});
+  const filas=[["Permanente D",c.D,12],["Viva L",c.L,52],["Diseño qu",c.qu,92]];
+  filas.forEach(([n,v,y],i)=>{ if(i) o+=`<rect x="${X(0)}" y="${y}" width="${X(v)-X(0)}" height="28" fill="${i===1?"var(--bad)":"var(--accent)"}" fill-opacity="${i===1?.55:.85}"/>`;
+    o+=`<text x="${ml-8}" y="${y+19}" text-anchor="end" font-size="12">${n}</text><text x="${X(v)+6}" y="${y+19}" font-size="12" font-family="var(--f-num)" font-weight="600">${nf(v,0)}</text>`;});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cargas">${o}</svg>`;
+}
+
+// ------------------------------------------------------------ tablas
+function arm(p,k){const x=p.flex[k];return x?esc(x.armado)+(x.constructivo?" <span style='color:var(--muted)'>mín.</span>":""):"-";}
+function tablaPiso(){
+  let o=`<thead><tr><th>Paño</th><th>Tipo</th><th>Lx×Ly</th><th>Inf. X</th><th>Inf. Y</th><th>Sup. N</th><th>Sup. S</th><th>Sup. E</th><th>Sup. O</th><th>Resultado</th></tr></thead><tbody>`;
+  R.panos.forEach((p,n)=>{ const ix=p.calculado?(p.dir==="X"?"pos_corta":"pos_larga"):null, iy=p.calculado?(p.dir==="Y"?"pos_corta":"pos_larga"):null;
+    o+=`<tr data-p="${n}" class="${n===sel?"sel":""}"><td><b>${p.id}</b></td><td>${p.calculado?p.tipo:"-"}</td><td class="n">${nf(p.W,1)}×${nf(p.H,1)}</td>`+
+    (p.calculado?`<td>${arm(p,ix)}</td><td>${arm(p,iy)}</td>`+["norte","sur","este","oeste"].map(b=>`<td>${arm(p,"neg_"+b)}</td>`).join(""):`<td colspan="6" class="nota">${esc(p.motivos[0])}</td>`)+
+    `<td>${pill(estadoPano(p))}</td></tr>`;});
+  $("tabla").innerHTML=o+"</tbody>";
+  const c=R.cargas, calc=R.panos.filter(p=>p.calculado);
+  const nGeo=R.geo.nervios.filter(x=>!x[3]).length;
+  $("kpis").innerHTML=[[nf(c.pp,1),"Peso propio (kg/m²)"],[nf(c.D,1),"Permanente D (kg/m²)"],[nf(c.qu,1),"qu = "+c.combo],
+    [`${calc.filter(p=>p.cumple).length} / ${R.panos.length}`,"Paños que cumplen"],[nGeo?"NO CUMPLE":"CUMPLE","Geometría de nervios"]]
+    .map(([v,t])=>`<div class="kpi"><b>${v}</b><span>${esc(t)}</span></div>`).join("");
+  const todos=R.panos.every(p=>p.calculado), ok=calc.every(p=>p.cumple)&&!nGeo;
+  $("pisoEstado").innerHTML=pill(!ok?"NO CUMPLE":todos?"CUMPLE":"INCOMPLETO");
+}
+
+function memoria(p){
+  const D=R.D,c=R.cargas,sec=R.sec; const f=(x,d=2)=>nf(x,d); let r=[];
+  const sx=t=>r.push(`<tr class="sec"><td colspan="3">${t}</td></tr>`), row=(a,b,v,e="")=>r.push(`<tr><td>${a}</td><td>${b}</td><td class="n">${v}</td><td>${e}</td></tr>`);
+  sx("Sección y cargas");
+  if(sec.nervada) row("Inercia de la sección T","bw·hn³/12 + bw·hn·(yg − hn/2)² + s·el³/12 + s·el·(hn + el/2 − yg)²",f(sec.Ig,0)+" cm⁴");
+  row("Altura equivalente he","(12·I/s)^(1/3)",f(sec.he)+" cm");
+  row("Peso propio",c.partes.map(x=>x[0]+" "+f(x[1],1)).join(" + "),f(c.pp,1)+" kg/m²");
+  row("Carga permanente D","pp + sobrecarga = "+f(c.pp,1)+" + "+f(c.sc,0),f(c.D,1)+" kg/m²");
+  row("Carga de diseño qu",`máx(1,4·${f(c.D,1)} ; 1,2·${f(c.D,1)} + 1,6·${f(c.L,0)})`,f(c.qu,1)+" kg/m²",c.combo);
+  if(!p.calculado){sx("Fuera de alcance"); p.motivos.forEach(m=>row(esc(m),"","-","")); return r.join("");}
+  sx(`Momentos (Tabla ${D.L.tipo==="nervada"?"9.7":"9.5"}, tipo ${p.tipo}, Lx/Ly = ${f(p.beta,3)})`);
+  for(const [k,n] of [["my_neg","My−"],["myb_neg","Myb−"],["my_pos","My+"],["myb_pos","Myb+"],["mx_neg","Mx−"],["mxb_neg","Mxb−"],["mx_pos","Mx+"],["mxb_pos","Mxb+"]])
+    if(p.coef[k]) row(n,`0,0001·${f(c.qu)}·${f(p.coef[k],1)}·${f(p.Lx)}²`,f(p.M[k],0)+" kg·m/m");
+  sx("Compatibilidad en bordes");
+  for(const b of BORDES) if(p.Mdis[b]!==undefined) row(`Borde ${b} (${p.cond[b]})`,"máx(propio ; vecino)",f(p.Mdis[b],0)+" kg·m/m",p.Mdis[b]?"gobierna "+p.origen[b]:"acero mínimo");
+  sx(`Flexión (d corta = ${f(p.d.corta,1)} cm, d larga = ${f(p.d.larga,1)} cm)`);
+  for(const x of Object.values(p.flex)){
+    row(`${x.nombre}: Mu = ${f(x.Mu,0)}`,`As = máx(As req ${x.Asreq===null?"no alcanza":f(x.Asreq)} ; As mín ${f(x.Asmin)}) cm²/m, b = ${f(x.b,0)}`,esc(x.armado),
+      pill(x.cumple?"CUMPLE":"NO CUMPLE")+` <span class="nota">a = ${f(x.a)} cm, εt = ${f(x.eps,4)}</span>`);}
+  sx("Cortante");
+  const ct=p.cort;
+  row("V en la cara de la viga",`qu·(Lx${ct.unApoyo?"":"/2"} − b/2)`,f(ct.Vcara,0)+" kg/m");
+  row("vu a la distancia d",`Vu/(0,75·${f(ct.bc,0)}·${f(p.d.corta,1)})`,f(ct.vu)+" kg/cm²");
+  row("vc",`${ct.fac>1?"1,1·":""}0,53·√${f(D.fc,0)}`,f(ct.vc)+" kg/cm²",pill(ct.estado));
+  if(ct.vumac) row("vu en el borde del macizado","Vu,mac/(φ·b·d)",f(ct.vumac)+" kg/cm²");
+  sx("Flechas (servicio, inercia efectiva)");
+  const fl=p.flecha;
+  row("Flecha elástica D + L",`0,0001·q·${f(p.coef.delta,0)}·Lx⁴/(E·he³)`,f(fl.el,3)+" cm");
+  row("Ie / Ig con D + L","Tabla 24.2.3.5",f(fl.IeIg,3));
+  row("Flecha por carga viva","ΔL",f(fl.fL,3)+" cm",pill(fl.fL<=fl.limL?"CUMPLE":"NO CUMPLE")+` <span class="nota">≤ ${f(fl.limL,3)}</span>`);
+  row("Flecha diferida + viva",`${f(D.lambda,1)}·Δsost + ΔL`,f(fl.flp,3)+" cm",pill(fl.flp<=fl.limLp?"CUMPLE":"NO CUMPLE")+` <span class="nota">≤ L/${fl.den} = ${f(fl.limLp,3)}</span>`);
+  sx("Altura mínima");
+  row("αm (rigidez viga / losa)","promedio de los 4 bordes",f(p.hmin.am,3));
+  row(sec.nervada?"he ≥ hmín":"h ≥ hmín","ACI 318-19, 8.3.1.2",`${f(p.hmin.valor)} ≥ ${f(p.hmin.hmin)}`,pill(p.hmin.cumple?"CUMPLE":"NO CUMPLE"));
+  if(R.geo.nervios.length){sx("Límites de nervios (ACI 9.8.1)"); R.geo.nervios.forEach(x=>row(x[0],"",`${f(x[1],1)} / ${f(x[2],1)}`,pill(x[3]?"CUMPLE":"NO CUMPLE")));}
+  return r.join("");
+}
+
+function detalle(){
+  const p=R.panos[sel];
+  $("t-pano").textContent=`Paño ${p.id}`;
+  $("panoEstado").innerHTML=pill(estadoPano(p));
+  $("panoInfo").textContent= p.calculado
+    ? `${nf(p.W)} × ${nf(p.H)} m · Bidireccional, tipo ${p.tipo} · Lx/Ly = ${nf(p.beta)} · dirección corta en ${p.dir} · bordes: norte ${p.cond.norte}, sur ${p.cond.sur}, este ${p.cond.este}, oeste ${p.cond.oeste}.`
+    : `${p.motivos.join(" ")} Este paño no se calcula aquí.`;
+  $("figs").innerHTML= p.calculado ? [
+    ["Sección a escala con el armado",figSeccion(p)],["Aprovechamiento: demanda / capacidad (cumple hasta 100 %)",figUso(p)],
+    [`Momentos, dirección corta (${p.dir}), kg·m/m`,figMomentos(p,"corta")],[`Momentos, dirección larga (${p.dir==="X"?"Y":"X"}), kg·m/m`,figMomentos(p,"larga")],
+    [`Cortante: ${p.cort.estado}`,figCortante(p)],["Cargas del piso (kg/m²)",figCargas()]
+  ].map(([t,s])=>`<div class="fig"><div class="t">${esc(t)}</div>${s}</div>`).join("") : `<div class="fig">${figCargas()}</div>`;
+  $("mem").innerHTML=`<thead><tr><th>Concepto</th><th>Fórmula / sustitución</th><th>Resultado</th><th>Verificación</th></tr></thead><tbody>${memoria(p)}</tbody>`;
+}
+
+function recalcular(){
+  deFormulario();
+  document.querySelectorAll(".nerv").forEach(e=>e.hidden= estado.tipo!=="nervada");
+  const D=datos(), err=validar(D);
+  $("aviso").textContent=err.join(" ");
+  if(err.length) return;
+  R=calcularPiso(D);
+  if(sel>=R.panos.length) sel=0;
+  dibujarPlanta(); tablaPiso(); detalle(); guardar();
+}
+
+function aplicarPreset(n){const p=PRESETS[n]; estado={...p}; delete estado.bordes; bordes=p.bordes?JSON.parse(JSON.stringify(p.bordes)):null; sel=0; aFormulario(); recalcular();}
+
+document.addEventListener("input",e=>{ if(CAMPOS.includes(e.target.id)) recalcular(); });
+$("preset").addEventListener("change",e=>aplicarPreset(e.target.value));
+function accion(t){
+  const b=t.closest("[data-b]"), pp=t.closest("[data-p]");
+  if(b){const [k,a,c]=b.dataset.b.split(","); const arr=bordes[k][+a]; arr[+c]=CICLO[arr[+c]]; recalcular(); return true;}
+  if(pp){sel=+pp.dataset.p; dibujarPlanta(); tablaPiso(); detalle(); guardar(); return true;}
+  return false;
+}
+document.addEventListener("click",e=>accion(e.target));
+document.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.closest&&e.target.closest("[data-b],[data-p]")){ e.preventDefault(); accion(e.target);} });
+
+cargar(); aFormulario(); recalcular();
+</script>
