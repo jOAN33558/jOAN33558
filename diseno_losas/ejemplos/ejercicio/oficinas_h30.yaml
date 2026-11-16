@@ -1,0 +1,15 @@
+proyecto: {nombre: "Ejercicio losa nervada 3 vanos (h = 30 cm)", piso: "Niveles +2,50 y +5,00 (oficinas)"}
+materiales: {fc: 210, fy: 4200, peso_hormigon: 2400, recubrimiento: 2.5}
+losa: {tipo: nervada, altura: 30, loseta: 5, ancho_nervio: 10, separacion_nervios: 50, peso_bloques: 128}
+cargas: {acabados: 140, paredes: 200, viva: 250, uso: "oficinas", soporta_mamposteria: true}
+vigas: {b: 25, h: 45}
+ejes:
+  x: {nombres: [A, B, C, D], distancias: [5, 5, 5]}
+  y: {nombres: ["1", "2", "3"], distancias: [4, 5]}
+panos:
+  - {id: P1, ejes_x: [A, B], ejes_y: ["1", "2"]}
+  - {id: P2, ejes_x: [B, C], ejes_y: ["1", "2"]}
+  - {id: P3, ejes_x: [C, D], ejes_y: ["1", "2"]}
+  - {id: P4, ejes_x: [A, B], ejes_y: ["2", "3"]}
+  - {id: P5, ejes_x: [B, C], ejes_y: ["2", "3"]}
+  - {id: P6, ejes_x: [C, D], ejes_y: ["2", "3"]}

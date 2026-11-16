@@ -24,6 +24,22 @@ Genera en la carpeta de salida:
 - `piso_ejemplo_figuras/`: una lámina por paño (`pano_P1.png`, ...), `general.png` y
   `aprovechamiento.png`. Las mismas figuras van incrustadas en el Excel.
 
+## Excel con fórmulas vivas
+
+Además de la memoria, el programa genera `<nombre>_vivo.xlsx` cuando el piso es una
+cuadrícula completa de losa nervada sin volados. En ese libro todo son fórmulas de
+Excel y los gráficos son gráficos nativos de Excel:
+
+- En la hoja DATOS se cambian las celdas amarillas (materiales, losa, cargas, vigas y
+  distancias entre ejes).
+- En la hoja de cada paño se cambian los bordes (lista: continuo, discontinuo, libre).
+- Se recalculan solos el tipo de paño, los momentos, la compatibilidad con los vecinos,
+  el armado, el cortante, las flechas, la altura mínima, los CUMPLE / NO CUMPLE y los
+  gráficos (sección, aprovechamiento, momentos y cortante).
+
+Las fórmulas se verificaron contra el programa: dan el mismo armado y el mismo
+resultado en cada paño (prueba `tests/test_excel_vivo.py`).
+
 ## Figuras que cambian con el diseño
 
 Ninguna figura es una imagen fija: todas se dibujan a escala con los datos de la
