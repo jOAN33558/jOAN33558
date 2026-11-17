@@ -1,0 +1,22 @@
+# Edificio del ejercicio: dos pisos de oficinas y una terraza inaccesible.
+# Losa nervada de 30 cm (loseta 5 + bloque 25). Se agrega un volado de 1,20 m
+# con antepecho en el borde sur de los paños A-B y B-C.
+proyecto: {nombre: "Ejercicio losa nervada - edificio", piso: "Oficinas"}
+materiales: {fc: 210, fy: 4200, peso_hormigon: 2400, recubrimiento: 2.5}
+losa: {tipo: nervada, altura: 30, loseta: 5, ancho_nervio: 10, separacion_nervios: 50, peso_bloques: 128}
+cargas: {acabados: 140, paredes: 200, viva: 250, uso: oficinas, soporta_mamposteria: true}
+vigas: {b: 25, h: 45}
+ejes:
+  x: {nombres: [A, B, C, D], distancias: [5, 5, 5]}
+  y: {nombres: ["1", "2", "3"], distancias: [4, 5]}
+pisos:
+  - {nombre: "Nivel +2,50 (oficinas)", sobrecarga: 340, viva: 250, soporta_mamposteria: true}
+  - {nombre: "Nivel +5,00 (oficinas)", sobrecarga: 340, viva: 250, soporta_mamposteria: true}
+  - {nombre: "Nivel +7,50 (terraza inaccesible)", sobrecarga: 100, viva: 100, soporta_mamposteria: false}
+panos:
+  - {id: P1, ejes_x: [A, B], ejes_y: ["1", "2"], volado: {borde: sur, longitud: 1.20, carga_borde: 150}}
+  - {id: P2, ejes_x: [B, C], ejes_y: ["1", "2"], volado: {borde: sur, longitud: 1.20, carga_borde: 150}}
+  - {id: P3, ejes_x: [C, D], ejes_y: ["1", "2"]}
+  - {id: P4, ejes_x: [A, B], ejes_y: ["2", "3"]}
+  - {id: P5, ejes_x: [B, C], ejes_y: ["2", "3"]}
+  - {id: P6, ejes_x: [C, D], ejes_y: ["2", "3"]}

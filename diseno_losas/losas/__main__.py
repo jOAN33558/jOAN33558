@@ -1,0 +1,63 @@
+"""Uso:  python -m losas entrada.yaml [--salida carpeta]"""
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import yaml
+
+from . import disenar_piso, leer
+from .excel_edificio import escribir_edificio, pisos_desde_yaml
+from .figuras import generar
+from .modelos import ErrorEntrada
+from .plano import dibujar
+from .salida_excel import escribir
+
+
+def ejecutar(entrada: str | Path, salida: str | Path | None = None):
+    """Diseña el piso descrito en ``entrada`` y escribe el Excel, el plano y las figuras.
+
+    Las figuras se dibujan con los datos de la corrida: cambian con cada paño y cada entrada.
+    """
+    entrada = Path(entrada)
+    carpeta = Path(salida) if salida else entrada.parent / "salida"
+    resultado = disenar_piso(leer(entrada))
+    plano = dibujar(resultado, carpeta / f"{entrada.stem}_plano.png")
+    laminas = generar(resultado, carpeta / f"{entrada.stem}_figuras")
+    excel = escribir(resultado, carpeta / f"{entrada.stem}_memoria.xlsx", plano, laminas)
+    try:      # Excel con fórmulas vivas y gráficos nativos (varios pisos y volados)
+        with open(entrada, encoding="utf-8") as f:
+            pisos = pisos_desde_yaml(yaml.safe_load(f))
+        escribir_edificio(leer(entrada), pisos, carpeta / f"{entrada.stem}_vivo.xlsx")
+    except ErrorEntrada as e:
+        resultado.avisos.append(f"No se generó el Excel con fórmulas vivas: {e}")
+    return resultado, excel, plano
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(prog="losas", description="Diseño de losas de un piso "
+                                 "(NEC-SE-HM, NEC-SE-CG, ACI 318-19).")
+    ap.add_argument("entrada", help="archivo YAML con la descripción del piso")
+    ap.add_argument("--salida", "-o", help="carpeta de salida (por defecto: ./salida junto a la entrada)")
+    args = ap.parse_args(argv)
+    try:
+        res, excel, plano = ejecutar(args.entrada, args.salida)
+    except ErrorEntrada as e:
+        print(f"ERROR EN LA ENTRADA: {e}", file=sys.stderr)
+        return 2
+    print(f"{'Paño':<8}{'Clasificación':<26}{'Resultado'}")
+    for r in res.panos.values():
+        clasif = (f"Bidireccional, tipo {r.tipo}" if r.tipo else r.clasificacion or "-")
+        print(f"{r.pano.id:<8}{clasif if r.calculado else 'No calculado':<26}{r.resultado}")
+    if res.avisos:
+        print("\nAVISOS:")
+        for a in res.avisos:
+            print(" - " + a)
+    print(f"\nMemoria: {excel}\nPlano:   {plano}\nFiguras: {excel.parent / (Path(args.entrada).stem + '_figuras')}")
+    print("RESULTADO DEL PISO: " + res.resultado)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

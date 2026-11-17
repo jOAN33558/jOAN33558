@@ -1,0 +1,70 @@
+# Ejemplo de entrada: piso de vivienda con losa nervada en dos direcciones.
+# Unidades: kg, cm, m (kg/cm2, kg/m2, kg/m). Las luces van de eje a eje de vigas.
+
+proyecto:
+  nombre: "Edificio de ejemplo"
+  piso: "Losa N+3.06"
+  autor: "Ingeniero calculista"
+
+materiales:
+  fc: 210               # kg/cm2
+  fy: 4200              # kg/cm2
+  peso_hormigon: 2400   # kg/m3
+  recubrimiento: 2.5    # cm, al borde de la varilla
+
+losa:
+  tipo: nervada         # nervada | maciza
+  altura: 25            # cm, altura total
+  loseta: 5             # cm
+  ancho_nervio: 10      # cm
+  separacion_nervios: 50   # cm, de eje a eje de nervios
+  peso_bloques: 100     # kg/m2
+  # Opcionales (se muestran los valores por defecto):
+  # diametros: [12, 14, 16, 18, 20]   # mm, varillas disponibles
+  # max_varillas_nervio: 2
+  # macizado: 0.425                   # m, desde la cara de la viga
+  # diametro_malla: 4                 # mm, malla de la loseta
+
+cargas:
+  acabados: 120         # kg/m2
+  paredes: 150          # kg/m2
+  viva: 200             # kg/m2 (valor que usted toma de NEC-SE-CG)
+  uso: vivienda         # solo etiqueta para la memoria
+  soporta_mamposteria: true   # true: limite L/480 ; false: L/240
+
+vigas:
+  b: 30                 # cm
+  h: 45                 # cm
+  # por_eje: {A: {b: 25, h: 40}}   # opcional, viga distinta en un eje
+
+ejes:
+  x: {nombres: [A, B, C, D], distancias: [4.00, 4.50, 2.00]}   # m
+  y: {nombres: ["1", "2", "3"], distancias: [5.00, 4.50]}
+
+# opciones:
+#   cortante: nec        # nec (0,53 raiz f'c) | aci318_19 (Tabla 22.5.5.1)
+
+# Bordes: auto | continuo | discontinuo | libre.
+# auto = continuo si hay un pano vecino, discontinuo si es perimetral.
+panos:
+  - id: P1
+    ejes_x: [A, B]
+    ejes_y: ["1", "2"]
+    volado: {borde: sur, longitud: 1.20, carga_borde: 150}   # antepecho, kg/m
+  - id: P2
+    ejes_x: [B, C]
+    ejes_y: ["1", "2"]
+  - id: P3
+    ejes_x: [C, D]
+    ejes_y: ["1", "2"]          # 2,00 x 5,00 m: Lx/Ly = 0,40, unidireccional
+  - id: P4
+    ejes_x: [A, B]
+    ejes_y: ["2", "3"]
+  - id: P5
+    ejes_x: [B, C]
+    ejes_y: ["2", "3"]
+    viva: 480                   # reemplaza la carga viva general en este pano
+  - id: P6
+    ejes_x: [C, D]
+    ejes_y: ["2", "3"]
+    fuera_de_alcance: {abertura: true}   # ducto de gradas: no se calcula
